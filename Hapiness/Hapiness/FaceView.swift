@@ -8,11 +8,21 @@
 
 import UIKit
 
+protocol FaceViewDataSource: class {
+    func smilinessForFaceView(sender: FaceView) -> Double?
+}
+
+@IBDesignable
 class FaceView: UIView {
   
+    @IBInspectable
     var scale: CGFloat = 0.90 { didSet { setNeedsDisplay() } }
+    @IBInspectable
     var color: UIColor = UIColor.blueColor() { didSet { setNeedsDisplay() } }
+    @IBInspectable
     var lineWidth: CGFloat = 3 { didSet { setNeedsDisplay() } }
+    
+    weak var dataSource: FaceViewDataSource?
     
     var faceCenter: CGPoint {
         return convertPoint(center, fromView: superview)
@@ -31,6 +41,13 @@ class FaceView: UIView {
         static let FaceRadiusToMouthWidthRatio: CGFloat = 1
         static let FaceRadiusToMouthHeightRatio: CGFloat = 3
         static let FaceRadiusToMouthOffsetRatio: CGFloat = 3
+    }
+    
+    func scale(gesture: UIPinchGestureRecognizer) {
+        if gesture.state == .Changed {
+            scale *= gesture.scale
+            gesture.scale = 1
+        }
     }
     
     private func bezierPathForEye(whichEye: Eye) -> UIBezierPath {
@@ -78,7 +95,7 @@ class FaceView: UIView {
         
         bezierPathForEye(.Left).stroke()
         bezierPathForEye(.Right).stroke()
-        let smiliness = 0.75
+        let smiliness = dataSource?.smilinessForFaceView(self) ?? 0.0
         bezierPathForSmile(smiliness).stroke()
         
     }

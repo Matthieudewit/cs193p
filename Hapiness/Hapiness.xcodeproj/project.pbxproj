@@ -36,7 +36,7 @@
 		799959D81A901D6D00E00B1C /* HapinessTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HapinessTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		799959DD1A901D6D00E00B1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		799959DE1A901D6D00E00B1C /* HapinessTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapinessTests.swift; sourceTree = "<group>"; };
-		799959E81A901F4100E00B1C /* HapinessViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HapinessViewController.swift; path = Hapiness/HapinessViewController.swift; sourceTree = "<group>"; };
+		799959E81A901F4100E00B1C /* HapinessViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HapinessViewController.swift; sourceTree = "<group>"; };
 		799959EA1A9032CA00E00B1C /* FaceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FaceView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -61,7 +61,6 @@
 		799959BA1A901D6D00E00B1C = {
 			isa = PBXGroup;
 			children = (
-				799959E81A901F4100E00B1C /* HapinessViewController.swift */,
 				799959C51A901D6D00E00B1C /* Hapiness */,
 				799959DB1A901D6D00E00B1C /* HapinessTests */,
 				799959C41A901D6D00E00B1C /* Products */,
@@ -80,6 +79,7 @@
 		799959C51A901D6D00E00B1C /* Hapiness */ = {
 			isa = PBXGroup;
 			children = (
+				799959E81A901F4100E00B1C /* HapinessViewController.swift */,
 				799959CC1A901D6D00E00B1C /* Main.storyboard */,
 				799959EA1A9032CA00E00B1C /* FaceView.swift */,
 				799959C61A901D6D00E00B1C /* Supporting Files */,
@@ -411,6 +411,7 @@
 				799959E41A901D6D00E00B1C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		799959E51A901D6D00E00B1C /* Build configuration list for PBXNativeTarget "HapinessTests" */ = {
 			isa = XCConfigurationList;
@@ -419,6 +420,7 @@
 				799959E71A901D6D00E00B1C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
