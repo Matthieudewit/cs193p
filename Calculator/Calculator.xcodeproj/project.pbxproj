@@ -17,6 +17,7 @@
 		794EB05F1A770F2E00A516B4 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 794EB05D1A770F2E00A516B4 /* LaunchScreen.xib */; };
 		794EB06B1A770F2E00A516B4 /* CalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794EB06A1A770F2E00A516B4 /* CalculatorTests.swift */; };
 		7950BFCE1A8C33AC00A5C96C /* CaclculatorBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7950BFCD1A8C33AC00A5C96C /* CaclculatorBrain.swift */; };
+		795C05AC1ABF9F9F00A8F055 /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795C05AB1ABF9F9F00A8F055 /* StatisticsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +45,7 @@
 		794EB0691A770F2E00A516B4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		794EB06A1A770F2E00A516B4 /* CalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorTests.swift; sourceTree = "<group>"; };
 		7950BFCD1A8C33AC00A5C96C /* CaclculatorBrain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CaclculatorBrain.swift; sourceTree = "<group>"; };
+		795C05AB1ABF9F9F00A8F055 /* StatisticsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +89,7 @@
 			children = (
 				794EB0561A770F2E00A516B4 /* CalculatorViewController.swift */,
 				7950BFCD1A8C33AC00A5C96C /* CaclculatorBrain.swift */,
+				795C05AB1ABF9F9F00A8F055 /* StatisticsViewController.swift */,
 				794E2F901AAFFF0100E31B22 /* GraphViewController.swift */,
 				794E2F921AAFFFD400E31B22 /* GraphView.swift */,
 				794E2F8E1AAFFE8B00E31B22 /* AxesDrawer.swift */,
@@ -230,6 +233,7 @@
 				794EB0571A770F2E00A516B4 /* CalculatorViewController.swift in Sources */,
 				794EB0551A770F2E00A516B4 /* AppDelegate.swift in Sources */,
 				794E2F931AAFFFD400E31B22 /* GraphView.swift in Sources */,
+				795C05AC1ABF9F9F00A8F055 /* StatisticsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

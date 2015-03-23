@@ -43,7 +43,15 @@
                             <constraint firstItem="FDD-HB-ZpH" firstAttribute="leading" secondItem="xs1-Ga-PEd" secondAttribute="leading" id="nGg-Kl-b1Y"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Graph" id="LUQ-Xk-NcB"/>
+                    <navigationItem key="navigationItem" title="Graph" id="LUQ-Xk-NcB">
+                        <barButtonItem key="rightBarButtonItem" title="Statistics" id="DNN-YE-PQh">
+                            <connections>
+                                <segue destination="gpt-7d-F2r" kind="popoverPresentation" identifier="Show Statistics" popoverAnchorBarButtonItem="DNN-YE-PQh" id="Jw2-JZ-7CC">
+                                    <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                </segue>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="graphView" destination="FDD-HB-ZpH" id="qO7-fq-Rkl"/>
                         <outlet property="navigationHeader" destination="LUQ-Xk-NcB" id="Wiu-q6-KRc"/>
@@ -67,6 +75,42 @@
                 </pinchGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="1917" y="-233"/>
+        </scene>
+        <!--Statistics View Controller-->
+        <scene sceneID="JL9-09-qQ6">
+            <objects>
+                <viewController id="gpt-7d-F2r" customClass="StatisticsViewController" customModule="Calculator" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="1Ff-zF-9vW"/>
+                        <viewControllerLayoutGuide type="bottom" id="Plg-ru-7Tw"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="DpU-3L-PZa">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eyI-ZN-qzR">
+                                <rect key="frame" x="0.0" y="20" width="600" height="580"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="eyI-ZN-qzR" firstAttribute="top" secondItem="1Ff-zF-9vW" secondAttribute="bottom" id="ErN-gm-7ZG"/>
+                            <constraint firstAttribute="bottomMargin" secondItem="eyI-ZN-qzR" secondAttribute="bottom" id="Esa-Ct-OUV"/>
+                            <constraint firstItem="eyI-ZN-qzR" firstAttribute="leading" secondItem="DpU-3L-PZa" secondAttribute="leading" id="Xdb-b2-DUT"/>
+                            <constraint firstAttribute="trailing" secondItem="eyI-ZN-qzR" secondAttribute="trailing" id="bnp-fx-Wgb"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="textView" destination="eyI-ZN-qzR" id="3bR-q6-rXg"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="mLd-M0-HP1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2600" y="-233"/>
         </scene>
         <!--Split View Controller-->
         <scene sceneID="quH-fG-MmK">

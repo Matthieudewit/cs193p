@@ -37,6 +37,8 @@ class GraphView: UIView {
         didSet { setNeedsDisplay() }
     }
     
+    var snapshot: UIView? = nil
+    
     weak var dataSource: GraphViewDataSource?
     
     override func drawRect(rect: CGRect) {
@@ -63,6 +65,61 @@ class GraphView: UIView {
         
         let axesDrawer = AxesDrawer(color: axesColor, contentScaleFactor: super.contentScaleFactor)
         axesDrawer.drawAxesInRect(self.bounds, origin: origin, pointsPerUnit: scale)
+    }
+    
+    func centerView(gesture: UITapGestureRecognizer) {
+        switch gesture.state {
+        case .Ended:
+            let translation = gesture.locationInView(self)
+            origin.x = translation.x
+            origin.y = translation.y
+        default:
+            break
+        }
+    }
+    
+    func moveView(gesture: UIPanGestureRecognizer) {
+        switch gesture.state {
+        case .Began:
+            snapshot = snapshotViewAfterScreenUpdates(false)
+            snapshot!.alpha = 0.7
+            self.addSubview(snapshot!)
+        case .Changed:
+            let translation = gesture.translationInView(self)
+            snapshot!.center.x += translation.x
+            snapshot!.center.y += translation.y
+            gesture.setTranslation(CGPointZero, inView: self)
+        case .Ended:
+            origin.x += snapshot!.frame.origin.x
+            origin.y += snapshot!.frame.origin.y
+            snapshot!.removeFromSuperview()
+            snapshot = nil
+        default:
+            break
+        }
+    }
+    
+    func zoomView(gesture: UIPinchGestureRecognizer) {
+        switch gesture.state {
+        case .Began:
+            snapshot = snapshotViewAfterScreenUpdates(false)
+            snapshot!.alpha = 0.7
+            snapshot!.center = origin
+            self.addSubview(snapshot!)
+        case .Changed:
+            let center = snapshot!.center
+            snapshot!.bounds.size.width *= gesture.scale
+            snapshot!.bounds.size.height *= gesture.scale
+            snapshot!.center = center
+            gesture.scale = 1.0
+        case .Ended:
+            let scaleFactor = snapshot!.bounds.size.height / self.bounds.size.height
+            scale *= scaleFactor
+            snapshot!.removeFromSuperview()
+            snapshot = nil
+        default:
+            break
+        }
     }
 
 
