@@ -28,18 +28,23 @@ class TweetTableViewCell: UITableViewCell {
         tweetTextLabel?.attributedText = nil
         
         if let tweet = self.tweet {
-            tweetTextLabel?.text = tweet.text
-            if tweetTextLabel?.text != nil {
-                for _ in tweet.media {
-                    tweetTextLabel?.text! += " ."
-                }
-            }
+            tweetTextLabel?.attributedText = tweet.attributedText
             
             tweetScreenNameLabel?.text = "\(tweet.user)"
             
-            if let profileImageURL = tweet.user.profileImageURL {
-                if let imageData = NSData(contentsOfURL: profileImageURL) {
-                    tweetProfileImageView?.image = UIImage(data: imageData)
+            if let url = tweet.user.profileImageURL {
+                let qos = Int(QOS_CLASS_USER_INITIATED.value)
+                dispatch_async(dispatch_get_global_queue(qos, 0)) {
+                    let imageData = NSData(contentsOfURL: url)
+                    dispatch_async(dispatch_get_main_queue()) {
+                        if url == tweet.user.profileImageURL {
+                            if imageData != nil {
+                                self.tweetProfileImageView?.image = UIImage(data: imageData!)
+                            } else {
+                                self.tweetProfileImageView?.image = nil
+                            }
+                        }
+                    }
                 }
             }
             
@@ -53,5 +58,28 @@ class TweetTableViewCell: UITableViewCell {
         }
         
     }
-
 }
+
+private extension Tweet {
+    var attributedText: NSAttributedString {
+        get {
+            var text = self.text
+            for _ in self.media {
+                text += " ."
+            }
+            var attributedText = NSMutableAttributedString(string: text)
+            for hashtag in self.hashtags {
+                attributedText.addAttribute(NSForegroundColorAttributeName, value: UIColor.brownColor(), range: hashtag.nsrange)
+            }
+            for userMention in self.userMentions {
+                attributedText.addAttribute(NSForegroundColorAttributeName, value: UIColor.orangeColor(), range: userMention.nsrange)
+            }
+            for url in self.urls {
+                attributedText.addAttribute(NSForegroundColorAttributeName, value: UIColor.blueColor(), range: url.nsrange)
+            }
+
+            return attributedText
+        }
+    }
+}
+
