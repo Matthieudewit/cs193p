@@ -10,37 +10,40 @@ import UIKit
 
 class ImageTableViewCell: UITableViewCell {
 
-    var cellImageURL: NSURL? {
+    var imageURL: NSURL? {
         didSet {
-            if let url = cellImageURL {
-                let qos = Int(QOS_CLASS_USER_INITIATED.value)
-                dispatch_async(dispatch_get_global_queue(qos, 0)) {
-                    let imageData = NSData(contentsOfURL: url)
-                    dispatch_async(dispatch_get_main_queue()) {
-                        if url == self.cellImageURL {
-                            if imageData != nil {
-                                self.cellImageView?.image = UIImage(data: imageData!)
-                            } else {
-                                self.cellImageView?.image = nil
-                            }
-                        }
-                    }
-                }
-                
-                if let data = NSData(contentsOfURL: cellImageURL!) {
-                    let cellImage = UIImage(data: data)
-                    cellImageView.image = cellImage
-                }
-            }
+            largeImageView.image = nil
+            fetchImage()
         }
     }
 
-    @IBOutlet weak var cellImageView: UIImageView!
+    @IBOutlet weak var largeImageView: UIImageView!
+
+    @IBOutlet weak var spinner: UIActivityIndicatorView!
 
     override func awakeFromNib() {
         super.awakeFromNib()
         accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
     }
+    
+    private func fetchImage() {
+        if let url = imageURL {
+            spinner.startAnimating()
+            let qos = Int(QOS_CLASS_USER_INITIATED.value)
+            dispatch_async(dispatch_get_global_queue(qos, 0)) {
+                let imageData = NSData(contentsOfURL: url)
+                dispatch_async(dispatch_get_main_queue()) {
+                    if url == self.imageURL {
+                        if imageData != nil {
+                            self.largeImageView.image = UIImage(data: imageData!)
+                        } else {
+                            self.largeImageView.image = nil
+                        }
+                        self.spinner.stopAnimating()
+                    }
+                }
+            }
+        }
+    }
 
 }
- 

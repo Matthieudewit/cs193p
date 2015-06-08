@@ -13,9 +13,17 @@ class TweetsTableViewController: UITableViewController, UITextFieldDelegate {
     var tweets = [[Tweet]]()
     
     var lastSuccesfulRequest: TwitterRequest?
+
     var nextRequestToAttempt: TwitterRequest? {
         if lastSuccesfulRequest == nil {
-            return searchText != nil ? TwitterRequest(search: searchText!, count: 100) : nil
+            if searchText != nil {
+                if searchText!.hasPrefix("@") {
+                    return TwitterRequest(search: "\(searchText!) OR from:\(searchText!)", count: 100)
+                } else {
+                    return TwitterRequest(search: searchText!, count: 100)
+                }
+            }
+            return nil
         } else {
             return lastSuccesfulRequest!.requestForNewer
         }
@@ -30,6 +38,7 @@ class TweetsTableViewController: UITableViewController, UITextFieldDelegate {
             refresh()
         }
     }
+
     @IBOutlet weak var searchTextField: UITextField! {
         didSet {
             searchTextField.delegate = self
@@ -40,6 +49,7 @@ class TweetsTableViewController: UITableViewController, UITextFieldDelegate {
     private struct Storyboard {
         static let TweetCellReuseIdentifier = "Tweet"
         static let ShowMentionsSegueIdentifier = "Show Mentions"
+        static let ShowCollectionSegueIdentifier = "Show Images"
     }
     
     // MARK: - View controller lifecycle
@@ -50,8 +60,6 @@ class TweetsTableViewController: UITableViewController, UITextFieldDelegate {
         tableView.rowHeight = UITableViewAutomaticDimension
         refresh()
     }
-    
-
     
     private func refresh() {
         if refreshControl != nil {
@@ -110,17 +118,20 @@ class TweetsTableViewController: UITableViewController, UITextFieldDelegate {
     }
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if let mentionsController = segue.destinationViewController as? MentionsTableViewController {
-            if let identifier = segue.identifier {
-                switch identifier {
-                case Storyboard.ShowMentionsSegueIdentifier:
-                    if let senderTweetCell = sender as? TweetTableViewCell where senderTweetCell.tweet != nil {
-                        mentionsController.tweet = senderTweetCell.tweet!
-                    }
-                default:
-                    break
+        if segue.identifier == nil { return }
+        switch segue.identifier! {
+        case Storyboard.ShowMentionsSegueIdentifier:
+            if let mentionsController = segue.destinationViewController as? MentionsTableViewController {
+                if let senderTweetCell = sender as? TweetTableViewCell where senderTweetCell.tweet != nil {
+                    mentionsController.tweet = senderTweetCell.tweet!
                 }
             }
+        case Storyboard.ShowCollectionSegueIdentifier:
+            if let collectionController = segue.destinationViewController as? ImagesCollectionViewController {
+                collectionController.tweets = tweets
+            }
+        default:
+            break
         }
     }
 }

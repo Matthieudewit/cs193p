@@ -13,7 +13,7 @@ class MentionsTableViewController: UITableViewController, UITableViewDelegate {
     private struct Section {
         let header: String
         let cellIdentifier: String
-        let mentions: [Mention]
+        var mentions: [Mention]
         private enum Mention {
             case Image(imageURL: NSURL, aspectRatio: CGFloat)
             case Hashtag(keyword: String)
@@ -26,6 +26,8 @@ class MentionsTableViewController: UITableViewController, UITableViewDelegate {
     
     private struct Storyboard {
         static let SearchTweetsSegueIdentifier = "Search Tweets"
+        static let ShowWebsiteSegueIdentifier = "Show Website"
+        static let ShowImageSegueIdentifier = "Show Image"
     }
 
     var tweet: Tweet? {
@@ -42,10 +44,12 @@ class MentionsTableViewController: UITableViewController, UITableViewDelegate {
                     mentions: tweet!.hashtags.map{ Section.Mention.Hashtag(keyword: $0.keyword) })
                 sections.append(hashtagsSection)
             }
-            if tweet?.userMentions.count > 0 {
+            if tweet != nil {
+                var userMentions = tweet!.userMentions.map{ Section.Mention.User(keyword: $0.keyword) }
+                userMentions.insert(Section.Mention.User(keyword: "@" + tweet!.user.screenName), atIndex: 0)
                 let usersSection = Section(header: "Users",
                     cellIdentifier: "Mention User",
-                    mentions: tweet!.userMentions.map{ Section.Mention.User(keyword: $0.keyword) })
+                    mentions: userMentions)
                 sections.append(usersSection)
             }
             if tweet?.urls.count > 0 {
@@ -98,7 +102,7 @@ class MentionsTableViewController: UITableViewController, UITableViewDelegate {
         switch sections[indexPath.section].mentions[indexPath.row] {
         case .Image(let imageURL, let aspectRatio):
             if let imageCell = cell as? ImageTableViewCell {
-                imageCell.cellImageURL = imageURL
+                imageCell.imageURL = imageURL
             }
         case .Hashtag(let hashtag):
             cell.textLabel?.text = hashtag
@@ -116,31 +120,40 @@ class MentionsTableViewController: UITableViewController, UITableViewDelegate {
         let section = sections[indexPath.section]
         let rowData = section.mentions[indexPath.row]
         switch rowData {
-        case .Image(let url):
-            break
         case .Hashtag:
             performSegueWithIdentifier(Storyboard.SearchTweetsSegueIdentifier, sender: tableView.cellForRowAtIndexPath(indexPath))
         case .User:
             performSegueWithIdentifier(Storyboard.SearchTweetsSegueIdentifier, sender: tableView.cellForRowAtIndexPath(indexPath))
-        case .URL(let url):
-            if let nsUrl = NSURL(string: url) {
-                UIApplication.sharedApplication().openURL(nsUrl)
-            }
+        default:
+            break
         }
     }
 
     // MARK: - Navigation
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if let tweetsTableController = segue.destinationViewController as? TweetsTableViewController {
-            if let senderCell = sender as? UITableViewCell where senderCell.textLabel?.text != nil {
-                tweetsTableController.searchText = senderCell.textLabel!.text
+        if segue.identifier == nil { return }
+        switch segue.identifier! {
+        case Storyboard.SearchTweetsSegueIdentifier:
+            if let tweetsTableController = segue.destinationViewController as? TweetsTableViewController {
+                if let senderCell = sender as? UITableViewCell where senderCell.textLabel?.text != nil {
+                    tweetsTableController.searchText = senderCell.textLabel!.text
+                }
             }
-        }
-        if let imageScrollController = segue.destinationViewController as? ImageScrollViewController {
-            if let senderCell = sender as? ImageTableViewCell where senderCell.cellImageView.image != nil {
-                imageScrollController.image = senderCell.cellImageView.image!
+        case Storyboard.ShowImageSegueIdentifier:
+            if let imageController = segue.destinationViewController as? ImageViewController {
+                if let senderCell = sender as? ImageTableViewCell where senderCell.imageURL != nil {
+                    imageController.imageURL = senderCell.imageURL
+                }
             }
+        case Storyboard.ShowWebsiteSegueIdentifier:
+            if let websiteController = segue.destinationViewController as? WebsiteViewController {
+                if let senderCell = sender as? UITableViewCell where senderCell.textLabel?.text != nil {
+                    websiteController.websiteURL = NSURL(string: senderCell.textLabel!.text!)
+                }
+            }
+         default:
+            break
         }
     }
 

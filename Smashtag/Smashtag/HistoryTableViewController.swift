@@ -11,7 +11,7 @@ import UIKit
 class HistoryTableViewController: UITableViewController, UITableViewDelegate {
     
     private struct Storyboard {
-        static let MentionHistoryCellIdentifier = "Mention History"
+        static let MentionHistoryCellReuseIdentifier = "Mention History"
         static let SearchTweetsSegueIdentifier = "Search History"
     }
     
@@ -29,12 +29,11 @@ class HistoryTableViewController: UITableViewController, UITableViewDelegate {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-    
+
     // MARK: - User actions
 
     @IBAction func clearHistory(sender: UIBarButtonItem) {
         var alert = UIAlertController(title: "Clear all searched mentions?", message: "Action can't be undone", preferredStyle: UIAlertControllerStyle.Alert)
-        // UIAlertAction(title: <#String#>, style: <#UIAlertActionStyle#>, handler: <#((UIAlertAction!) -> Void)!##(UIAlertAction!) -> Void#>)
         let clearAction = UIAlertAction(title: "Clear", style: UIAlertActionStyle.Destructive) {
             (action: UIAlertAction!) -> Void in
             History.clear()
@@ -58,9 +57,8 @@ class HistoryTableViewController: UITableViewController, UITableViewDelegate {
         return History.searchedMentions.count
     }
 
-
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(Storyboard.MentionHistoryCellIdentifier, forIndexPath: indexPath) as! UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(Storyboard.MentionHistoryCellReuseIdentifier, forIndexPath: indexPath) as! UITableViewCell
         cell.textLabel?.text = History.searchedMentions[indexPath.row]
         return cell
     }
@@ -74,15 +72,21 @@ class HistoryTableViewController: UITableViewController, UITableViewDelegate {
             }
         }
     }
+    
+    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        switch editingStyle {
+        case .Delete:
+            History.removeAtIndex(indexPath.row)
+            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+        default:
+            break
+        }
+    }
 
     // MARK: - Navigation
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if let tweetsTableController = segue.destinationViewController as? TweetsTableViewController {
-            if let senderCell = sender as? UITableViewCell where senderCell.textLabel?.text != nil {
-                tweetsTableController.searchText = senderCell.textLabel!.text
-            }
-        }
+
     }
 
 }
@@ -109,6 +113,10 @@ struct History {
     static func append(searchedMention: String) {
         History.mentions = History.mentions.filter { $0 != searchedMention ? true : false }
         History.mentions.insert(searchedMention, atIndex: 0)
+    }
+    
+    static func removeAtIndex(index: Int) {
+        History.mentions.removeAtIndex(index)
     }
 
     static func clear() {
