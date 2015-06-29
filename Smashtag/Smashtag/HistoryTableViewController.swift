@@ -8,7 +8,7 @@
 
 import UIKit
 
-class HistoryTableViewController: UITableViewController, UITableViewDelegate {
+class HistoryTableViewController: UITableViewController {
     
     private struct Storyboard {
         static let MentionHistoryCellReuseIdentifier = "Mention History"
@@ -33,7 +33,7 @@ class HistoryTableViewController: UITableViewController, UITableViewDelegate {
     // MARK: - User actions
 
     @IBAction func clearHistory(sender: UIBarButtonItem) {
-        var alert = UIAlertController(title: "Clear all searched mentions?", message: "Action can't be undone", preferredStyle: UIAlertControllerStyle.Alert)
+        let alert = UIAlertController(title: "Clear all searched mentions?", message: "Action can't be undone", preferredStyle: UIAlertControllerStyle.Alert)
         let clearAction = UIAlertAction(title: "Clear", style: UIAlertActionStyle.Destructive) {
             (action: UIAlertAction!) -> Void in
             History.clear()
@@ -58,7 +58,7 @@ class HistoryTableViewController: UITableViewController, UITableViewDelegate {
     }
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(Storyboard.MentionHistoryCellReuseIdentifier, forIndexPath: indexPath) as! UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(Storyboard.MentionHistoryCellReuseIdentifier, forIndexPath: indexPath)
         cell.textLabel?.text = History.searchedMentions[indexPath.row]
         return cell
     }

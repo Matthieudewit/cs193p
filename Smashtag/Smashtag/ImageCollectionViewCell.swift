@@ -30,7 +30,7 @@ class ImageCollectionViewCell: UICollectionViewCell {
                 imageView.image = UIImage(data: cacheImageData)
             }
             spinner.startAnimating()
-            let qos = Int(QOS_CLASS_USER_INITIATED.value)
+            let qos = Int(QOS_CLASS_USER_INITIATED.rawValue)
             dispatch_async(dispatch_get_global_queue(qos, 0)) {
                 let imageData = NSData(contentsOfURL: url)
                 dispatch_async(dispatch_get_main_queue()) { [unowned self] in

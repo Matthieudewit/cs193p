@@ -8,9 +8,9 @@
 
 import Foundation
 
-class CalculatorBrain: Printable {
+class CalculatorBrain: CustomStringConvertible {
     
-    private enum Op: Printable {
+    private enum Op: CustomStringConvertible {
         case Operand(Double)
         case Variable(String)
         case Constant(String,
@@ -40,7 +40,7 @@ class CalculatorBrain: Printable {
             }
         }
     }
-    enum ValueOrError: Printable {
+    enum ValueOrError: CustomStringConvertible {
         case Value(Double)
         case Error(String)
       
@@ -67,7 +67,7 @@ class CalculatorBrain: Printable {
         get {
             var returnDesc = ""
             var returnOps = opStack
-            do {
+            repeat {
                 let (additionalDesc, additionalOps) = describe(returnOps)
                 returnDesc = returnDesc.isEmpty ? additionalDesc : additionalDesc+", "+returnDesc
                 returnOps = additionalOps
@@ -248,7 +248,7 @@ class CalculatorBrain: Printable {
     
     func evaluate() -> Double? {
         let (result, remainingOps) = evaluate(opStack)
-        println("\(opStack) = \(result ?? 0) with \(remainingOps) left over")
+        print("\(opStack) = \(result ?? 0) with \(remainingOps) left over")
         if result != nil {
             if result!.isNaN || result!.isInfinite {
                 return nil
@@ -259,7 +259,7 @@ class CalculatorBrain: Printable {
     
     func evaluateAndReportErrors() -> ValueOrError {
         let (result, remainingOps) = evaluateAndReportErrors(opStack)
-        println("\(opStack) = \(result) with \(remainingOps) unevaluated")
+        print("\(opStack) = \(result) with \(remainingOps) unevaluated")
         return result
     }
 

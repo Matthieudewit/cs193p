@@ -49,7 +49,7 @@ class WebsiteViewController: UIViewController, UIWebViewDelegate {
         spinner.stopAnimating()
     }
     
-    func webView(webView: UIWebView, didFailLoadWithError error: NSError) {
+    func webView(webView: UIWebView, didFailLoadWithError error: NSError?) {
         spinner.stopAnimating()
     }
 

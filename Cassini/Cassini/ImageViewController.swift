@@ -9,7 +9,18 @@
 import UIKit
 
 class ImageViewController: UIViewController, UIScrollViewDelegate {
-    
+
+    var image: UIImage? {
+        get {
+            return imageView.image
+        }
+        set {
+            imageView.image = newValue
+            imageView.sizeToFit()
+            scrollView?.contentSize = imageView.frame.size
+            spinner?.stopAnimating()
+        }
+    }
 
     var imageURL: NSURL? {
         didSet {
@@ -19,6 +30,8 @@ class ImageViewController: UIViewController, UIScrollViewDelegate {
             }
         }
     }
+    
+    private var imageView = UIImageView()
 
     @IBOutlet weak var scrollView: UIScrollView! {
         didSet {
@@ -28,29 +41,27 @@ class ImageViewController: UIViewController, UIScrollViewDelegate {
             scrollView.maximumZoomScale = 3.0
         }
     }
-    
-    func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {
-        return imageView
-    }
 
-    private var imageView = UIImageView()
+    @IBOutlet weak var spinner: UIActivityIndicatorView!
+
+    // MARK: - View controller lifecycle
     
-    private var image: UIImage? {
-        get { return imageView.image }
-        set {
-            imageView.image = newValue
-            imageView.sizeToFit()
-            scrollView?.contentSize = imageView.frame.size
-            spinner?.stopAnimating()
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        scrollView.addSubview(imageView)
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        if image == nil {
+            fetchImage()
         }
     }
     
-    @IBOutlet weak var spinner: UIActivityIndicatorView!
-    
     private func fetchImage() {
         if let url = imageURL {
-            let qos = Int(QOS_CLASS_USER_INITIATED.value)
             spinner?.startAnimating()
+            let qos = Int(QOS_CLASS_USER_INITIATED.rawValue)
             dispatch_async(dispatch_get_global_queue(qos, 0)) {
                 let imageData = NSData(contentsOfURL: url)
                 dispatch_async(dispatch_get_main_queue()) {
@@ -60,22 +71,17 @@ class ImageViewController: UIViewController, UIScrollViewDelegate {
                         } else {
                             self.image = nil
                         }
+                        self.spinner?.stopAnimating()
                     }
                 }
             }
         }
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        scrollView.addSubview(imageView)
-    }
-
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        if image == nil {
-            fetchImage()
-        }
+    // MARK: - Scroll view delegate
+    
+    func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {
+        return imageView
     }
 
 }

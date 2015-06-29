@@ -33,7 +33,7 @@ class TweetTableViewCell: UITableViewCell {
             tweetScreenNameLabel?.text = "\(tweet.user)"
             
             if let url = tweet.user.profileImageURL {
-                let qos = Int(QOS_CLASS_USER_INITIATED.value)
+                let qos = Int(QOS_CLASS_USER_INITIATED.rawValue)
                 dispatch_async(dispatch_get_global_queue(qos, 0)) {
                     let imageData = NSData(contentsOfURL: url)
                     dispatch_async(dispatch_get_main_queue()) {
@@ -67,7 +67,7 @@ private extension Tweet {
             for _ in self.media {
                 text += " ."
             }
-            var attributedText = NSMutableAttributedString(string: text)
+            let attributedText = NSMutableAttributedString(string: text)
             for hashtag in self.hashtags {
                 attributedText.addAttribute(NSForegroundColorAttributeName, value: UIColor.brownColor(), range: hashtag.nsrange)
             }

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MentionsTableViewController: UITableViewController, UITableViewDelegate {
+class MentionsTableViewController: UITableViewController {
 
     private struct Section {
         let header: String
@@ -88,19 +88,18 @@ class MentionsTableViewController: UITableViewController, UITableViewDelegate {
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         switch sections[indexPath.section].mentions[indexPath.row] {
-        case .Image(let imageURL, let aspectRatio):
-            return ( tableView.bounds.width - CGFloat(25) ) * aspectRatio
+        case .Image(_, let aspectRatio):
+            let height = ( tableView.bounds.width - CGFloat(25) ) / aspectRatio
+            return height
         default:
             return UITableViewAutomaticDimension
         }
     }
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(sections[indexPath.section].cellIdentifier,
-            forIndexPath: indexPath) as! UITableViewCell
-
+        let cell = tableView.dequeueReusableCellWithIdentifier(sections[indexPath.section].cellIdentifier, forIndexPath: indexPath)
         switch sections[indexPath.section].mentions[indexPath.row] {
-        case .Image(let imageURL, let aspectRatio):
+        case .Image(let imageURL, _):
             if let imageCell = cell as? ImageTableViewCell {
                 imageCell.imageURL = imageURL
             }

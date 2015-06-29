@@ -15,11 +15,11 @@ class PsychologistsViewController: UIViewController {
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        var destination = segue.destinationViewController as? UIViewController
-        if let navCon = destination as? UINavigationController {
-            destination = navCon.visibleViewController
+        var destinationController = segue.destinationViewController
+        if let navigationController = destinationController as? UINavigationController {
+            destinationController = navigationController.visibleViewController!
         }
-        if let hvc = destination as? HapinessViewController {
+        if let hvc = destinationController as? HapinessViewController {
             if let identifier = segue.identifier {
                 switch identifier {
                 case "Show Sad": hvc.happiness = 0;

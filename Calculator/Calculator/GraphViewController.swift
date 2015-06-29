@@ -28,7 +28,7 @@ class GraphViewController: UIViewController, GraphViewDataSource, UIPopoverPrese
 
     private var brain = CalculatorBrain()
     
-    private class Statistics: Printable {
+    private class Statistics: CustomStringConvertible {
         var max: Double? = nil
         var avg: Double? = nil
         var min: Double? = nil

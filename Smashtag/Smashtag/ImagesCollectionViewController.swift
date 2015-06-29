@@ -9,7 +9,7 @@
 import UIKit
 
 
-class ImagesCollectionViewController: UICollectionViewController, UICollectionViewDelegate {
+class ImagesCollectionViewController: UICollectionViewController {
     
     var tweets: [[Tweet]] = [] {
         didSet {

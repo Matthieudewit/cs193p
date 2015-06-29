@@ -85,8 +85,8 @@ class CalculatorViewController: UIViewController {
     
     @IBAction func undo() {
         if userIsInTheMiddleOfTypingANumber {
-            if countElements(display.text!) > 1 {
-                display.text = dropLast(display.text!)
+            if display.text!.characters.count > 1 {
+                display.text = String(dropLast((display.text!).characters))
             } else {
                 userIsInTheMiddleOfTypingANumber = false
                 display.value = 0
@@ -114,11 +114,11 @@ class CalculatorViewController: UIViewController {
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        var destination = segue.destinationViewController as? UIViewController
-        if let navCon = destination as? UINavigationController {
-            destination = navCon.visibleViewController
+        var destinationController = segue.destinationViewController
+        if let navigationController = destinationController as? UINavigationController {
+            destinationController = navigationController.visibleViewController!
         }
-        if let graphViewController = destination as? GraphViewController {
+        if let graphViewController = destinationController as? GraphViewController {
             if let identifier = segue.identifier {
                 switch identifier {
                 case "Show Graph":
