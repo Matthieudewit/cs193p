@@ -13,7 +13,7 @@
 		79F806901B38E90C0036419F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 79F8068F1B38E90C0036419F /* Images.xcassets */; };
 		79F806931B38E90C0036419F /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 79F806911B38E90C0036419F /* LaunchScreen.xib */; };
 		79F8069F1B38E90C0036419F /* BreakoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F8069E1B38E90C0036419F /* BreakoutTests.swift */; };
-		79F806AB1B38EB280036419F /* BreakoutDynamicBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F806AA1B38EB280036419F /* BreakoutDynamicBehavior.swift */; };
+		79F806AB1B38EB280036419F /* BreakoutGameBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F806AA1B38EB280036419F /* BreakoutGameBehavior.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,7 +37,7 @@
 		79F806981B38E90C0036419F /* BreakoutTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BreakoutTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		79F8069D1B38E90C0036419F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		79F8069E1B38E90C0036419F /* BreakoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakoutTests.swift; sourceTree = "<group>"; };
-		79F806AA1B38EB280036419F /* BreakoutDynamicBehavior.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BreakoutDynamicBehavior.swift; sourceTree = "<group>"; };
+		79F806AA1B38EB280036419F /* BreakoutGameBehavior.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BreakoutGameBehavior.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,9 +79,9 @@
 		79F806851B38E90C0036419F /* Breakout */ = {
 			isa = PBXGroup;
 			children = (
-				79F806AA1B38EB280036419F /* BreakoutDynamicBehavior.swift */,
-				79F806881B38E90C0036419F /* AppDelegate.swift */,
+				79F806AA1B38EB280036419F /* BreakoutGameBehavior.swift */,
 				79F8068A1B38E90C0036419F /* BreakoutViewController.swift */,
+				79F806881B38E90C0036419F /* AppDelegate.swift */,
 				79F8068C1B38E90C0036419F /* Main.storyboard */,
 				79F8068F1B38E90C0036419F /* Images.xcassets */,
 				79F806861B38E90C0036419F /* Supporting Files */,
@@ -160,7 +160,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0630;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Stanford University";
 				TargetAttributes = {
 					79F806821B38E90C0036419F = {
@@ -217,7 +217,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				79F806AB1B38EB280036419F /* BreakoutDynamicBehavior.swift in Sources */,
+				79F806AB1B38EB280036419F /* BreakoutGameBehavior.swift in Sources */,
 				79F8068B1B38E90C0036419F /* BreakoutViewController.swift in Sources */,
 				79F806891B38E90C0036419F /* AppDelegate.swift in Sources */,
 			);
@@ -282,6 +282,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -352,6 +353,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Breakout/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "edu.stanford.cs193p.molda.vojta.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 			};
@@ -365,6 +367,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Breakout/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "edu.stanford.cs193p.molda.vojta.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 			};
@@ -384,6 +387,7 @@
 				);
 				INFOPLIST_FILE = BreakoutTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "edu.stanford.cs193p.molda.vojta.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Breakout.app/Breakout";
 			};
@@ -399,6 +403,7 @@
 				);
 				INFOPLIST_FILE = BreakoutTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "edu.stanford.cs193p.molda.vojta.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Breakout.app/Breakout";
 			};
