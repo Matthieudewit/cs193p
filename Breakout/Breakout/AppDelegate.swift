@@ -13,6 +13,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
+    struct Settings {
+        static let Defaults = NSUserDefaults.standardUserDefaults()
+        struct Ball {
+            static var Size: CGFloat {
+                get { return Defaults.objectForKey("Ball.Size") as? CGFloat ?? 25.0 }
+                set { Defaults.setObject(newValue, forKey: "Ball.Size") }
+            }
+            static var StartSpreadAngle: CGFloat {
+                get { return Defaults.objectForKey("Ball.StartSpreadAngle") as? CGFloat ?? CGFloat(M_PI/8) }
+                set { Defaults.setObject(newValue, forKey: "Ball.StartSpreadAngle") }
+            }
+        }
+        struct Brick {
+            static var Rows: Int {
+                get { return Defaults.objectForKey("Brick.Rows") as? Int ?? 3 }
+                set { Defaults.setObject(newValue, forKey: "Brick.Rows") }
+            }
+            static var Columns: Int {
+                get { return Defaults.objectForKey("Brick.Columns") as? Int ?? 5 }
+                set { Defaults.setObject(newValue, forKey: "Brick.Columns") }
+            }
+        }
+        struct Game {
+            static var ContinueAfterGameOver: Bool {
+                get { return Defaults.objectForKey("Game.ContinueAfterGameOver") as? Bool ?? true }
+                set { Defaults.setObject(newValue, forKey: "Game.ContinueAfterGameOver") }
+            }
+        }
+    }
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.

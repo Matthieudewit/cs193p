@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		790F06661B6D849800FBCE87 /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790F06651B6D849800FBCE87 /* SettingsTableViewController.swift */; };
 		79F806891B38E90C0036419F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F806881B38E90C0036419F /* AppDelegate.swift */; };
 		79F8068B1B38E90C0036419F /* BreakoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F8068A1B38E90C0036419F /* BreakoutViewController.swift */; };
 		79F8068E1B38E90C0036419F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 79F8068C1B38E90C0036419F /* Main.storyboard */; };
@@ -27,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		790F06651B6D849800FBCE87 /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
 		79F806831B38E90C0036419F /* Breakout.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Breakout.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		79F806871B38E90C0036419F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		79F806881B38E90C0036419F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -81,6 +83,7 @@
 			children = (
 				79F806AA1B38EB280036419F /* BreakoutGameBehavior.swift */,
 				79F8068A1B38E90C0036419F /* BreakoutViewController.swift */,
+				790F06651B6D849800FBCE87 /* SettingsTableViewController.swift */,
 				79F806881B38E90C0036419F /* AppDelegate.swift */,
 				79F8068C1B38E90C0036419F /* Main.storyboard */,
 				79F8068F1B38E90C0036419F /* Images.xcassets */,
@@ -217,6 +220,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				790F06661B6D849800FBCE87 /* SettingsTableViewController.swift in Sources */,
 				79F806AB1B38EB280036419F /* BreakoutGameBehavior.swift in Sources */,
 				79F8068B1B38E90C0036419F /* BreakoutViewController.swift in Sources */,
 				79F806891B38E90C0036419F /* AppDelegate.swift in Sources */,

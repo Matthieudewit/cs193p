@@ -16,8 +16,8 @@ public enum BreakoutViewType: Int {
 }
 
 public protocol BreakoutGameDelegate {
-    func breakoutGameVictory() -> Void
-    func breakoutGameOver() -> Void
+    func winGame() -> Void
+    func endGame() -> Void
 }
 
 public extension UIView {
@@ -164,7 +164,7 @@ class BreakoutGameBehavior: UIDynamicBehavior, UICollisionBehaviorDelegate {
     func removeView(view: UIView, animated: Bool = true) {
         if animated == true {
             UIView.transitionWithView(view, duration: 1.0,
-                options: .TransitionFlipFromTop | .AllowUserInteraction,
+                options: .TransitionFlipFromTop,
                 animations: { },
                 completion: { (finished: Bool) -> Void in
                     self.removeView(view, animated: false)
@@ -193,45 +193,49 @@ class BreakoutGameBehavior: UIDynamicBehavior, UICollisionBehaviorDelegate {
         view.removeFromSuperview()
     }
     
-    private var ballVelocity: CGPoint = CGPointZero
+    private var pausedBallVelocity: CGPoint?
 
-    func pause(pause: Bool = true) {
+    func pauseGame() {
         if let ballView = ballBehavior.items.first as? UIView {
-            if pause == true {
-                ballVelocity = ballBehavior.linearVelocityForItem(ballView)
-                ballBehavior.addLinearVelocity(-ballVelocity, forItem: ballView)
-            } else {
-                ballBehavior.addLinearVelocity( ballVelocity, forItem: ballView)
-            }
+            pausedBallVelocity = ballBehavior.linearVelocityForItem(ballView)
+            ballBehavior.addLinearVelocity(-pausedBallVelocity!, forItem: ballView)
         }
     }
     
+    func resumeGame() {
+        if let ballView = ballBehavior.items.first as? UIView {
+            if pausedBallVelocity != nil {
+                ballBehavior.addLinearVelocity(pausedBallVelocity!, forItem: ballView)
+                pausedBallVelocity = nil
+            }
+        }
+    }
+
     func collisionBehavior(behavior: UICollisionBehavior, beganContactForItem item1: UIDynamicItem, withItem item2: UIDynamicItem, atPoint p: CGPoint) {
-        let (ballView, paddleView, brickView) = collisionViewsForItems([item1, item2])
+        let (ballView, _, brickView) = collisionViewsForItems([item1, item2])
         if ballView != nil {
             ballBehavior.limitLinearVelocity(min: Constants.Ball.MinVelocity, max: Constants.Ball.MaxVelocity, forItem: ballView!)
         }
         if ballView != nil && brickView != nil {
             if brickAttachments.count == 1 {
-                delegate?.breakoutGameVictory()
+                delegate?.winGame()
             }
             removeView(brickView!, animated: true)
         }
     }
     
     func collisionBehavior(behavior: UICollisionBehavior, endedContactForItem item1: UIDynamicItem, withItem item2: UIDynamicItem) {
-        let (ballView, paddleView, brickView) = collisionViewsForItems([item1, item2])
+        let (ballView, paddleView, _) = collisionViewsForItems([item1, item2])
         if ballView != nil {
             ballBehavior.limitLinearVelocity(min: Constants.Ball.MinVelocity, max: Constants.Ball.MaxVelocity, forItem: ballView!)
         }
         if ballView != nil && paddleView != nil {
-            let ballVelocity = ballBehavior.linearVelocityForItem(ballView!)
             ballBehavior.addLinearVelocity(CGPoint(x: 0.0, y: 10.0), forItem: ballView!)
         }
     }
 
-    func collisionBehavior(behavior: UICollisionBehavior, beganContactForItem item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying, atPoint p: CGPoint) {
-        let (ballView, paddleView, brickView) = collisionViewsForItems([item])
+    func collisionBehavior(behavior: UICollisionBehavior, beganContactForItem item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?, atPoint p: CGPoint) {
+        let (ballView, _, _) = collisionViewsForItems([item])
         if ballView != nil {
             ballBehavior.limitLinearVelocity(min: Constants.Ball.MinVelocity, max: Constants.Ball.MaxVelocity, forItem: ballView!)
         }
@@ -239,7 +243,7 @@ class BreakoutGameBehavior: UIDynamicBehavior, UICollisionBehaviorDelegate {
             switch boundaryName {
             case Constants.Boundary.Bottom:
                 if ballView != nil {
-                    delegate?.breakoutGameOver()
+                    delegate?.endGame()
                 }
             default:
                 break
@@ -270,7 +274,7 @@ class BreakoutGameBehavior: UIDynamicBehavior, UICollisionBehaviorDelegate {
 }
 
 private extension UIDynamicItemBehavior {
-    func limitLinearVelocity(#min: CGFloat, max: CGFloat, forItem item: UIDynamicItem) {
+    func limitLinearVelocity(min min: CGFloat, max: CGFloat, forItem item: UIDynamicItem) {
         assert(min < max, "min < max")
         let itemVelocity = linearVelocityForItem(item)
         if itemVelocity.magnitude == 0.0 { return }
