@@ -19,6 +19,10 @@
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="4nq-k6-Cmj">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <gestureRecognizers/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="wle-QL-fwB" appends="YES" id="bGe-5G-MjC"/>
+                                </connections>
                             </mapView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -47,11 +51,85 @@
                     <connections>
                         <outlet property="mapView" destination="4nq-k6-Cmj" id="1bl-0f-UJ2"/>
                         <segue destination="Atv-Aj-qlm" kind="show" identifier="Show Image" id="vIV-R7-4FB"/>
+                        <segue destination="byo-aV-5W1" kind="popoverPresentation" identifier="Edit Waypoint" popoverAnchorView="4nq-k6-Cmj" id="DVf-bI-QH6">
+                            <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                        </segue>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="wle-QL-fwB">
+                    <connections>
+                        <action selector="addWaypoint:" destination="BYZ-38-t0r" id="3y2-c1-u1O"/>
+                    </connections>
+                </pongPressGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="1164" y="606"/>
+        </scene>
+        <!--Edit Waypoint-->
+        <scene sceneID="zyr-m9-Xhe">
+            <objects>
+                <viewController id="byo-aV-5W1" customClass="EditWaypointViewController" customModule="Trax" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="9fV-41-oOx"/>
+                        <viewControllerLayoutGuide type="bottom" id="58G-KQ-Nbw"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="aid-dV-4kV">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Beb-4U-LEh">
+                                <rect key="frame" x="16" y="31" width="46" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="J1t-xA-HCA">
+                                <rect key="frame" x="70" y="28" width="514" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="B3S-VL-UGR">
+                                <rect key="frame" x="70" y="66" width="514" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Info" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vf2-sq-1G5">
+                                <rect key="frame" x="16" y="69" width="46" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="B3S-VL-UGR" firstAttribute="trailing" secondItem="aid-dV-4kV" secondAttribute="trailingMargin" id="3UO-uB-2HP"/>
+                            <constraint firstItem="J1t-xA-HCA" firstAttribute="leading" secondItem="B3S-VL-UGR" secondAttribute="leading" id="77O-XO-Xdu"/>
+                            <constraint firstItem="58G-KQ-Nbw" firstAttribute="top" relation="greaterThanOrEqual" secondItem="B3S-VL-UGR" secondAttribute="bottom" constant="8" symbolic="YES" id="BN2-Gh-Uzo"/>
+                            <constraint firstItem="B3S-VL-UGR" firstAttribute="leading" secondItem="Vf2-sq-1G5" secondAttribute="trailing" constant="8" symbolic="YES" id="GBo-pf-vAP"/>
+                            <constraint firstItem="Vf2-sq-1G5" firstAttribute="leading" secondItem="aid-dV-4kV" secondAttribute="leadingMargin" id="MEm-jL-17B"/>
+                            <constraint firstItem="J1t-xA-HCA" firstAttribute="baseline" secondItem="Beb-4U-LEh" secondAttribute="baseline" id="Pa0-xX-lk8"/>
+                            <constraint firstItem="Beb-4U-LEh" firstAttribute="leading" secondItem="aid-dV-4kV" secondAttribute="leadingMargin" id="SbG-r1-w2x"/>
+                            <constraint firstItem="Vf2-sq-1G5" firstAttribute="baseline" secondItem="B3S-VL-UGR" secondAttribute="baseline" id="ZyR-fx-UQZ"/>
+                            <constraint firstItem="J1t-xA-HCA" firstAttribute="trailing" secondItem="aid-dV-4kV" secondAttribute="trailingMargin" id="p9b-8Z-m4G"/>
+                            <constraint firstItem="J1t-xA-HCA" firstAttribute="leading" secondItem="Beb-4U-LEh" secondAttribute="trailing" constant="8" symbolic="YES" id="shc-GM-f47"/>
+                            <constraint firstItem="B3S-VL-UGR" firstAttribute="top" secondItem="J1t-xA-HCA" secondAttribute="bottom" constant="8" symbolic="YES" id="tgU-A0-BaG"/>
+                            <constraint firstItem="J1t-xA-HCA" firstAttribute="top" secondItem="9fV-41-oOx" secondAttribute="bottom" constant="8" symbolic="YES" id="wrf-3C-TXy"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Edit Waypoint" id="W1P-jc-NJH">
+                        <barButtonItem key="rightBarButtonItem" title="Done" id="9NI-if-fPd">
+                            <connections>
+                                <action selector="done:" destination="byo-aV-5W1" id="brn-K8-O7B"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="infoTextField" destination="B3S-VL-UGR" id="thd-gO-d7O"/>
+                        <outlet property="nameTextField" destination="J1t-xA-HCA" id="vda-rF-Plb"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="pSX-Pn-3s4" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1935" y="-110"/>
         </scene>
         <!--Image-->
         <scene sceneID="GxM-eB-qb8">
@@ -89,7 +167,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eQP-le-Vzu" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1903" y="606"/>
+            <point key="canvasLocation" x="1935" y="606"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="sAh-OY-PZi">

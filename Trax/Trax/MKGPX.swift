@@ -8,6 +8,18 @@
 
 import MapKit
 
+extension GPX {
+
+    class MutableWaypoint: GPX.Waypoint {
+        
+        override var coordinate: CLLocationCoordinate2D {
+            get { return super.coordinate }
+            set { latitude = newValue.latitude; longitude = newValue.longitude }
+        }
+
+    }
+}
+
 extension GPX.Waypoint: MKAnnotation {
     
     var title: String! { return name }
