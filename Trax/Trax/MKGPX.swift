@@ -16,6 +16,10 @@ extension GPX {
             get { return super.coordinate }
             set { latitude = newValue.latitude; longitude = newValue.longitude }
         }
+        
+        override var thumbnailURL: NSURL? { return links.first?.url }
+        override var imageURL: NSURL? { return links.first?.url }
+
 
     }
 }
