@@ -1,0 +1,18 @@
+/* Message in an alert when the user types in an incorrect user name or password */
+"Invalid user name or password" = "Nom d'utilisateur ou mot de passe invalide";
+
+/* Report the number of days ago and time the use last logged in */
+"Last Login %@ days ago at %@" = "Dernière connexion il ya %1$@ jours à %2$@";
+
+/* Title of alert when user types in an incorrect user name or password */
+"Login Error" = "Erreur Connexion";
+
+/* Prompt for a password when it is not secure (i.e. plain text) */
+"Password" = "Mot de Passe";
+
+/* (No Commment) */
+"Secured Password" = "Mot de Passe Sécurisé";
+
+/* The only button available in an alert presented when the user types incorrect user name or password */
+"Try Again" = "Essayer à Nouveau";
+

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8121.20" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8121.20" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8101.16"/>
@@ -27,7 +27,7 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Username" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0fw-uQ-DQd">
                                 <rect key="frame" x="20" y="31" width="79" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="wkK-tg-e6Z">
@@ -60,22 +60,28 @@
                                 <rect key="frame" x="409" y="104" width="171" height="30"/>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="H8x-3N-boP">
-                                <rect key="frame" x="507" y="346" width="73" height="21"/>
+                                <rect key="frame" x="507" y="361" width="73" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalCompressionResistancePriority="800" text="Company" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="srr-nA-arU">
-                                <rect key="frame" x="507" y="375" width="73" height="21"/>
+                                <rect key="frame" x="507" y="390" width="73" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" verticalHuggingPriority="200" verticalCompressionResistancePriority="700" image="stanford" translatesAutoresizingMaskIntoConstraints="NO" id="u3I-ih-8Ae">
-                                <rect key="frame" x="20" y="142" width="479" height="450"/>
+                                <rect key="frame" x="20" y="171" width="479" height="421"/>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Password" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Wgj-LR-2UQ">
                                 <rect key="frame" x="20" y="69" width="79" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Last Login" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Yn-Mo-r84">
+                                <rect key="frame" x="20" y="142" width="79" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
@@ -86,6 +92,7 @@
                             <constraint firstItem="PS8-fe-hsm" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="0h8-Wo-N09"/>
                             <constraint firstItem="srr-nA-arU" firstAttribute="top" secondItem="H8x-3N-boP" secondAttribute="bottom" constant="8" symbolic="YES" id="1eU-UQ-NOQ"/>
                             <constraint firstItem="vbd-dg-TWt" firstAttribute="leading" secondItem="PS8-fe-hsm" secondAttribute="trailing" constant="8" symbolic="YES" id="21P-qA-vUo"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="9Yn-Mo-r84" secondAttribute="leading" id="2hf-wp-HIO"/>
                             <constraint firstItem="Rjs-6A-S8H" firstAttribute="leading" secondItem="vbd-dg-TWt" secondAttribute="trailing" constant="50" id="3Pk-UP-Zdl"/>
                             <constraint firstItem="u3I-ih-8Ae" firstAttribute="centerY" secondItem="H8x-3N-boP" secondAttribute="bottom" id="5lL-ft-oVT"/>
                             <constraint firstItem="srr-nA-arU" firstAttribute="top" secondItem="H8x-3N-boP" secondAttribute="bottom" constant="8" id="AAS-8r-FtJ">
@@ -107,7 +114,7 @@
                             <constraint firstItem="Wgj-LR-2UQ" firstAttribute="baseline" secondItem="wkK-tg-e6Z" secondAttribute="baseline" id="MZs-sH-Udj"/>
                             <constraint firstItem="Rjs-6A-S8H" firstAttribute="baseline" secondItem="vbd-dg-TWt" secondAttribute="baseline" id="OJc-4O-rPg"/>
                             <constraint firstItem="srr-nA-arU" firstAttribute="leading" secondItem="H8x-3N-boP" secondAttribute="leading" id="TCN-bb-69n"/>
-                            <constraint firstItem="u3I-ih-8Ae" firstAttribute="top" relation="greaterThanOrEqual" secondItem="GnD-y4-tGc" secondAttribute="bottom" constant="8" symbolic="YES" id="VQO-dh-jRI"/>
+                            <constraint firstItem="u3I-ih-8Ae" firstAttribute="top" relation="greaterThanOrEqual" secondItem="9Yn-Mo-r84" secondAttribute="bottom" constant="8" symbolic="YES" id="XZ3-Xx-Kvr"/>
                             <constraint firstItem="PS8-fe-hsm" firstAttribute="width" secondItem="GnD-y4-tGc" secondAttribute="width" id="ZRX-mr-gmR"/>
                             <constraint firstItem="wkK-tg-e6Z" firstAttribute="leading" secondItem="Wgj-LR-2UQ" secondAttribute="trailing" constant="8" symbolic="YES" id="ZhQ-m8-Qty"/>
                             <constraint firstItem="wkK-tg-e6Z" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="aal-Ip-v4g"/>
@@ -124,6 +131,7 @@
                             <constraint firstAttribute="trailingMargin" secondItem="srr-nA-arU" secondAttribute="trailing" constant="495" id="h20-PY-i5Q">
                                 <variation key="heightClass=regular" constant="0.0"/>
                             </constraint>
+                            <constraint firstItem="9Yn-Mo-r84" firstAttribute="top" secondItem="Rjs-6A-S8H" secondAttribute="bottom" constant="8" symbolic="YES" id="hDf-QA-tVX"/>
                             <constraint firstItem="u3I-ih-8Ae" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="11" id="hr7-XK-vFD">
                                 <variation key="heightClass=regular" constant="0.0"/>
                             </constraint>
@@ -168,7 +176,6 @@
                             <mask key="constraints">
                                 <exclude reference="5lL-ft-oVT"/>
                                 <include reference="HPc-98-ROO"/>
-                                <exclude reference="VQO-dh-jRI"/>
                                 <exclude reference="fLC-by-0ez"/>
                                 <include reference="hr7-XK-vFD"/>
                                 <include reference="Jo1-aU-dPx"/>
@@ -190,6 +197,7 @@
                     <connections>
                         <outlet property="companyLabel" destination="srr-nA-arU" id="qdK-wL-yb9"/>
                         <outlet property="imageView" destination="u3I-ih-8Ae" id="imH-bS-1LR"/>
+                        <outlet property="lastLoginLabel" destination="9Yn-Mo-r84" id="OwR-Ye-oH7"/>
                         <outlet property="loginField" destination="d6b-Er-s0K" id="r4H-C5-JfY"/>
                         <outlet property="nameLabel" destination="H8x-3N-boP" id="uSs-oc-u7c"/>
                         <outlet property="passwordField" destination="wkK-tg-e6Z" id="EMj-Wf-pN9"/>
@@ -198,7 +206,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="479" y="606.75"/>
+            <point key="canvasLocation" x="479" y="606"/>
         </scene>
     </scenes>
     <resources>

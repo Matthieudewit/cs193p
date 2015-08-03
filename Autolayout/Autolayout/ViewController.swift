@@ -17,12 +17,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var companyLabel: UILabel!
     @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var lastLoginLabel: UILabel!
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        updateUI()
-    }
-    
     var loggedInUser: User? {
         didSet { updateUI() }
     }
@@ -63,19 +59,53 @@ class ViewController: UIViewController {
             }
         }
     }
+    
+    private struct AlertStrings {
+        struct LoginError {
+            static let Title = NSLocalizedString("Login Error",
+                comment: "Title of alert when user types in an incorrect user name or password")
+            static let Message = NSLocalizedString("Invalid user name or password",
+                comment: "Message in an alert when the user types in an incorrect user name or password")
+            static let DismissButton = NSLocalizedString("Try Again",
+                comment: "The only button available in an alert presented when the user types incorrect user name or password")
+        }
+    }
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        updateUI()
+    }
     
     private func updateUI() {
         passwordField.secureTextEntry = secure
-        passwordLabel.text = secure ? "Secure Password" : "Password"
+        let password = NSLocalizedString("Password", comment: "Prompt for a password when it is not secure (i.e. plain text)")
+        let securedPassword = NSLocalizedString("Secure Password", comment: "Prompt for a password when it is secure (i.e. obscured)")
+        passwordLabel.text = secure ? securedPassword : password
         nameLabel.text = loggedInUser?.name
         companyLabel.text = loggedInUser?.company
         image = loggedInUser?.image
+        if let lastLogin = loggedInUser?.lastLogin {
+            let dateFormatter = NSDateFormatter()
+            dateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
+            dateFormatter.dateStyle = NSDateFormatterStyle.NoStyle
+            let time = dateFormatter.stringFromDate(lastLogin)
+            let numberFormatter = NSNumberFormatter()
+            numberFormatter.maximumFractionDigits = 1
+            let daysAgo = numberFormatter.stringFromNumber(-lastLogin.timeIntervalSinceNow/(60*60*24))!
+            let lastLoginFormatString = NSLocalizedString("Last Login %@ days ago at %@", comment: "Report the number of days ago and time the use last logged in")
+            lastLoginLabel.text = String.localizedStringWithFormat(lastLoginFormatString, daysAgo, time)
+        } else {
+            lastLoginLabel.text = ""
+        }
     }
     
     @IBAction func login() {
         loggedInUser = User.login(loginField.text ?? "", password: passwordField.text ?? "")
-        
+        if loggedInUser == nil {
+            let alert = UIAlertController(title: AlertStrings.LoginError.Title, message: AlertStrings.LoginError.Message, preferredStyle: UIAlertControllerStyle.Alert)
+            alert.addAction(UIAlertAction(title: AlertStrings.LoginError.DismissButton, style: UIAlertActionStyle.Default, handler: nil))
+            presentViewController(alert, animated: true, completion: nil)
+        }
     }
 
     @IBAction func toggleSecurity() {
