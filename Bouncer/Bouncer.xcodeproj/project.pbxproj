@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		798E8CF01B6EFF7800663E29 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 798E8CEF1B6EFF7800663E29 /* Settings.bundle */; };
 		79F806251B3799230036419F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F806241B3799230036419F /* AppDelegate.swift */; };
 		79F806271B3799230036419F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F806261B3799230036419F /* ViewController.swift */; };
 		79F8062A1B3799230036419F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 79F806281B3799230036419F /* Main.storyboard */; };
@@ -27,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		798E8CEF1B6EFF7800663E29 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		79F8061F1B3799230036419F /* Bouncer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bouncer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		79F806231B3799230036419F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		79F806241B3799230036419F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -83,8 +85,7 @@
 				79F806A81B38E9820036419F /* BouncerDynamicBehavior.swift */,
 				79F806261B3799230036419F /* ViewController.swift */,
 				79F806281B3799230036419F /* Main.storyboard */,
-				79F8062B1B3799230036419F /* Images.xcassets */,
-				79F8062D1B3799230036419F /* LaunchScreen.xib */,
+				798E8CEF1B6EFF7800663E29 /* Settings.bundle */,
 				79F806221B3799230036419F /* Supporting Files */,
 			);
 			path = Bouncer;
@@ -93,6 +94,8 @@
 		79F806221B3799230036419F /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				79F8062B1B3799230036419F /* Images.xcassets */,
+				79F8062D1B3799230036419F /* LaunchScreen.xib */,
 				79F806231B3799230036419F /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -195,6 +198,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				798E8CF01B6EFF7800663E29 /* Settings.bundle in Resources */,
 				79F8062A1B3799230036419F /* Main.storyboard in Resources */,
 				79F8062F1B3799230036419F /* LaunchScreen.xib in Resources */,
 				79F8062C1B3799230036419F /* Images.xcassets in Resources */,
