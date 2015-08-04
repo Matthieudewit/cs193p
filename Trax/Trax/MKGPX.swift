@@ -26,8 +26,8 @@ extension GPX {
 
 extension GPX.Waypoint: MKAnnotation {
     
-    var title: String! { return name }
-    var subtitle: String! { return info }
+    var title: String? { return name }
+    var subtitle: String? { return info }
     var coordinate: CLLocationCoordinate2D { return CLLocationCoordinate2D(latitude: latitude, longitude: longitude) }
     
     var thumbnailURL: NSURL? { return getImageURLOfType("thumbnail") }

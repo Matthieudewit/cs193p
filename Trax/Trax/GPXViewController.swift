@@ -41,7 +41,7 @@ class GPXViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentat
     
     private func clearWaypoints() {
         if mapView?.annotations != nil {
-            mapView.removeAnnotations(mapView.annotations as? [MKAnnotation])
+            mapView.removeAnnotations(mapView.annotations)
         }
     }
     
@@ -111,32 +111,30 @@ class GPXViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentat
 
     // MARK: - Map view delegate
     
-    func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
-        var view = mapView.dequeueReusableAnnotationViewWithIdentifier(Constants.AnnotationViewReuseIdentifier)
-        if view == nil {
-            view = MKPinAnnotationView(annotation: annotation, reuseIdentifier: Constants.AnnotationViewReuseIdentifier)
-            view.canShowCallout = true
+    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+        var annotationView = mapView.dequeueReusableAnnotationViewWithIdentifier(Constants.AnnotationViewReuseIdentifier)
+        if annotationView == nil {
+            annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: Constants.AnnotationViewReuseIdentifier)
+            annotationView!.canShowCallout = true
         } else {
-            view.annotation = annotation
+            annotationView!.annotation = annotation
         }
-        
-        view.draggable = annotation is GPX.MutableWaypoint
+        annotationView!.draggable = annotation is GPX.MutableWaypoint
 
-        view.leftCalloutAccessoryView = nil
-        view.rightCalloutAccessoryView = nil
+        annotationView!.leftCalloutAccessoryView = nil
+        annotationView!.rightCalloutAccessoryView = nil
         if let waypoint = annotation as? GPX.Waypoint {
             if waypoint.thumbnailURL != nil {
-                view.leftCalloutAccessoryView = UIButton(frame: Constants.LeftCalloutFrame)
+                annotationView!.leftCalloutAccessoryView = UIButton(frame: Constants.LeftCalloutFrame)
             }
             if annotation is GPX.MutableWaypoint {
-                view.rightCalloutAccessoryView = UIButton.buttonWithType(UIButtonType.DetailDisclosure) as! UIButton
+                annotationView!.rightCalloutAccessoryView = UIButton(type: UIButtonType.DetailDisclosure)
             }
         }
-
-        return view
+        return annotationView!
     }
     
-    func mapView(mapView: MKMapView!, didDeselectAnnotationView view: MKAnnotationView!) {
+    func mapView(mapView: MKMapView, didDeselectAnnotationView view: MKAnnotationView) {
         if let waypoint = view.annotation as? GPX.Waypoint {
             if let thumbnailImageButton = view.leftCalloutAccessoryView as? UIButton {
                 if let imageData = NSData(contentsOfURL: waypoint.thumbnailURL!) { // Blocks main thread
@@ -148,12 +146,15 @@ class GPXViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentat
         }
     }
     
-    func mapView(mapView: MKMapView!, annotationView view: MKAnnotationView!, calloutAccessoryControlTapped control: UIControl!) {
-        if (control as? UIButton)?.buttonType == UIButtonType.DetailDisclosure {
-            mapView.deselectAnnotation(view.annotation, animated: false)
-            performSegueWithIdentifier(Constants.EditWaypointSegue, sender: view)
-        } else if let imageURL = (view.annotation as? GPX.Waypoint)?.imageURL {
-            performSegueWithIdentifier(Constants.ShowImageSegue, sender: view)
+    func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        if let buttonType = (control as? UIButton)?.buttonType {
+            switch buttonType {
+            case UIButtonType.DetailDisclosure:
+                mapView.deselectAnnotation(view.annotation, animated: false)
+                performSegueWithIdentifier(Constants.EditWaypointSegue, sender: view)
+            default:
+                performSegueWithIdentifier(Constants.ShowImageSegue, sender: view)
+            }
         }
     }
     
@@ -176,7 +177,7 @@ class GPXViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentat
 extension UIViewController {
     var contentViewController: UIViewController {
         if let navigationController = self as? UINavigationController {
-            return navigationController.visibleViewController
+            return navigationController.visibleViewController!
         } else {
             return self
         }

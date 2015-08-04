@@ -24,7 +24,7 @@ class WaypointImageViewController: ImageViewController {
         if let mapView = simpleMapViewController?.mapView {
             mapView.mapType = .Hybrid
             mapView.removeAnnotations(mapView.annotations)
-            mapView.addAnnotation(waypoint)
+            if waypoint != nil { mapView.addAnnotation(waypoint!) }
             mapView.showAnnotations(mapView.annotations, animated: true)
         }
     }

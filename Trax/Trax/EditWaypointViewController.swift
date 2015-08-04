@@ -9,7 +9,7 @@
 import UIKit
 import MobileCoreServices
 
-class EditWaypointViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class EditWaypointViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     
     var waypoint: GPX.MutableWaypoint? {
         didSet { updateUI() }
@@ -65,7 +65,7 @@ class EditWaypointViewController: UIViewController, UITextFieldDelegate, UIImage
         if UIImagePickerController.isSourceTypeAvailable(.Camera) {
             let picker = UIImagePickerController()
             picker.sourceType = .Camera
-            picker.mediaTypes = [kUTTypeImage]
+            picker.mediaTypes = [String(kUTTypeImage)]
             picker.allowsEditing = true
             picker.delegate = self
             presentViewController(picker, animated: true, completion: nil)
@@ -74,22 +74,20 @@ class EditWaypointViewController: UIViewController, UITextFieldDelegate, UIImage
     
     func saveImageInWaypoint() {
         if let image = imageView.image {
-            if let imageData = UIImageJPEGRepresentation(imageView.image, 1.0) {
+            if let imageData = UIImageJPEGRepresentation(image, 1.0) {
                 let fileManager = NSFileManager()
-                if let docsDir = fileManager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first as? NSURL {
+                if let docsDir = fileManager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first {
                     let unique = NSDate.timeIntervalSinceReferenceDate()
                     let url = docsDir.URLByAppendingPathComponent("\(unique).jpg")
-                    if let path = url.absoluteString {
-                        if imageData.writeToURL(url, atomically: true) {
-                            waypoint?.links = [GPX.Link(href: path)]
-                        }
+                    if imageData.writeToURL(url, atomically: true) {
+                        waypoint?.links = [GPX.Link(href: url.absoluteString)]
                     }
                 }
             }
         }
     }
 
-    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]) {
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String:AnyObject]) {
         var image = info[UIImagePickerControllerEditedImage] as? UIImage
         if image == nil {
             image = info[UIImagePickerControllerOriginalImage] as? UIImage
@@ -147,7 +145,7 @@ class EditWaypointViewController: UIViewController, UITextFieldDelegate, UIImage
 extension EditWaypointViewController {
     func updateImage() {
         if let url = waypoint?.imageURL {
-            let qos = Int(QOS_CLASS_USER_INITIATED.value)
+            let qos = Int(QOS_CLASS_USER_INITIATED.rawValue)
             dispatch_async(dispatch_get_global_queue(qos, 0)) { [weak self] in
                 if let imageData = NSData(contentsOfURL: url) {
                     if url == self?.waypoint?.imageURL {

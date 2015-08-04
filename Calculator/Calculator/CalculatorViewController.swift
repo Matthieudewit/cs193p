@@ -86,7 +86,7 @@ class CalculatorViewController: UIViewController {
     @IBAction func undo() {
         if userIsInTheMiddleOfTypingANumber {
             if display.text!.characters.count > 1 {
-                display.text = String(dropLast((display.text!).characters))
+                display.text = String((display.text!).characters.dropLast())
             } else {
                 userIsInTheMiddleOfTypingANumber = false
                 display.value = 0

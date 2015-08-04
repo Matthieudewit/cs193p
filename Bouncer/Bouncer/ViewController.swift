@@ -49,7 +49,7 @@ class ViewController: UIViewController {
     }
 
     func addBlock() -> UIView {
-        let block = UIView(frame: CGRect(origin: .zeroPoint, size: Constants.BlockSize))
+        let block = UIView(frame: CGRect(origin: .zero, size: Constants.BlockSize))
         block.center = CGPoint(x: view.bounds.midX, y: view.bounds.midY)
         view.addSubview(block)
         return block
