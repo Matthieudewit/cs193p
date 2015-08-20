@@ -18,32 +18,81 @@ class ViewController: UIViewController {
 
     @IBAction func appendDigit(sender: UIButton) {
         let digit = sender.currentTitle!
-        if userIsInTheMiddleOfTypingANumber {
-            display.text = display.text! + digit
-        } else {
-            display.text = digit
+        display.text = userIsInTheMiddleOfTypingANumber ? display.text! + digit : digit
+        userIsInTheMiddleOfTypingANumber = true
+    }
+
+    @IBAction func appendPeriod(sender: UIButton) {
+        if display.text!.rangeOfString(".") == nil {
+            appendDigit(sender)
+        }
+    }
+    
+    @IBAction func appendSign(sender: UIButton) {
+        if userIsInTheMiddleOfTypingANumber && displayValue != nil {
+            displayValue = -displayValue!
             userIsInTheMiddleOfTypingANumber = true
+        } else {
+            operate(sender)
         }
     }
 
+    @IBAction func pushConstant(sender: UIButton) {
+        let constant = sender.currentTitle!
+        if userIsInTheMiddleOfTypingANumber { enter() }
+        display.text = constant
+        brain.pushOperation(constant)
+        history.text = brain.description
+    }
+
+    @IBAction func pushMemory(sender: UIButton) {
+        let variable = sender.currentTitle!
+        if userIsInTheMiddleOfTypingANumber { enter() }
+        display.text = variable
+        brain.pushVariable(variable)
+        history.text = brain.description
+    }
+    
+    @IBAction func setMemory(sender: UIButton) {
+        var variable = sender.currentTitle!
+        variable.removeAtIndex(variable.startIndex)
+        if displayValue != nil {
+            brain.variableValues[variable] = displayValue!
+            displayValue = brain.evaluate()
+            history.text = brain.description+"="
+        }
+    }
+    
     @IBAction func operate(sender: UIButton) {
         let operation = sender.currentTitle!
         if userIsInTheMiddleOfTypingANumber { enter() }
-        history.text! += operation + " "
-        displayValue = brain.performOperation(operation) ?? 0
-        enter()
+        displayValue = brain.evaluateOperation(operation)
+        history.text = brain.description+"="
     }
     
+    @IBAction func backspace() {
+        if !userIsInTheMiddleOfTypingANumber { return }
+        if countElements(display.text!) > 1 {
+            display.text = dropLast(display.text!)
+        } else {
+            userIsInTheMiddleOfTypingANumber = false
+            displayValue = 0
+        }
+    }
+
     @IBAction func clear() {
         userIsInTheMiddleOfTypingANumber = false
-        display.text = "0";
+        brain.variableValues.removeAll(keepCapacity: true)
         history.text = "";
+        brain.clear()
+        displayValue = 0;
     }
 
     @IBAction func enter() {
-        userIsInTheMiddleOfTypingANumber = false
-        history.text! += display.text! + " "
-        displayValue = brain.pushOperand(displayValue) ?? 0
+        if displayValue != nil {
+            displayValue = brain.evaluateOperand(displayValue!)
+        }
+        history.text = brain.description
     }
 
     var operandStack = Array<Double>()
@@ -59,7 +108,7 @@ class ViewController: UIViewController {
         }
         set {
             userIsInTheMiddleOfTypingANumber = false
-            display.text = "\(newValue)"
+            display.text = newValue != nil ? "\(newValue!)" : " "
         }
     }
 
