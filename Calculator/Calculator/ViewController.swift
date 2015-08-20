@@ -8,6 +8,18 @@
 
 import UIKit
 
+extension UILabel {
+    
+    var value: Double? {
+        get {
+            return NSNumberFormatter().numberFromString(self.text!) as? Double
+        }
+        set {
+            self.text = newValue != nil ? "\(newValue!)" : " "
+        }
+    }
+}
+
 class ViewController: UIViewController {
 
     @IBOutlet weak var display: UILabel!
@@ -29,9 +41,8 @@ class ViewController: UIViewController {
     }
     
     @IBAction func appendSign(sender: UIButton) {
-        if userIsInTheMiddleOfTypingANumber && displayValue != nil {
-            displayValue = -displayValue!
-            userIsInTheMiddleOfTypingANumber = true
+        if userIsInTheMiddleOfTypingANumber && display.value != nil {
+            display.value = -display.value!
         } else {
             operate(sender)
         }
@@ -39,7 +50,7 @@ class ViewController: UIViewController {
 
     @IBAction func pushConstant(sender: UIButton) {
         let constant = sender.currentTitle!
-        if userIsInTheMiddleOfTypingANumber { enter() }
+        enter()
         display.text = constant
         brain.pushOperation(constant)
         history.text = brain.description
@@ -47,7 +58,7 @@ class ViewController: UIViewController {
 
     @IBAction func pushMemory(sender: UIButton) {
         let variable = sender.currentTitle!
-        if userIsInTheMiddleOfTypingANumber { enter() }
+        enter()
         display.text = variable
         brain.pushVariable(variable)
         history.text = brain.description
@@ -56,43 +67,50 @@ class ViewController: UIViewController {
     @IBAction func setMemory(sender: UIButton) {
         var variable = sender.currentTitle!
         variable.removeAtIndex(variable.startIndex)
-        if displayValue != nil {
-            brain.variableValues[variable] = displayValue!
-            displayValue = brain.evaluate()
+        userIsInTheMiddleOfTypingANumber = false
+        if let displayValue = display.value {
+            brain.variableValues[variable] = displayValue
+            display.text = brain.text
             history.text = brain.description+"="
         }
     }
     
     @IBAction func operate(sender: UIButton) {
         let operation = sender.currentTitle!
-        if userIsInTheMiddleOfTypingANumber { enter() }
-        displayValue = brain.evaluateOperation(operation)
+        enter()
+        brain.pushOperation(operation)
+        display.text = brain.text
         history.text = brain.description+"="
     }
     
-    @IBAction func backspace() {
-        if !userIsInTheMiddleOfTypingANumber { return }
-        if countElements(display.text!) > 1 {
-            display.text = dropLast(display.text!)
+    @IBAction func undo() {
+        if userIsInTheMiddleOfTypingANumber {
+            if countElements(display.text!) > 1 {
+                display.text = dropLast(display.text!)
+            } else {
+                userIsInTheMiddleOfTypingANumber = false
+                display.value = 0
+            }
         } else {
-            userIsInTheMiddleOfTypingANumber = false
-            displayValue = 0
+            brain.pop()
+            display.value = 0
+            history.text = brain.description
         }
     }
 
     @IBAction func clear() {
         userIsInTheMiddleOfTypingANumber = false
-        brain.variableValues.removeAll(keepCapacity: true)
-        history.text = "";
-        brain.clear()
-        displayValue = 0;
+        brain.clearAll()
+        display.value = 0
+        history.text = ""
     }
 
     @IBAction func enter() {
-        if displayValue != nil {
-            displayValue = brain.evaluateOperand(displayValue!)
+        if userIsInTheMiddleOfTypingANumber && display.value != nil {
+            brain.pushOperand(display.value!)
+            history.text = brain.description
         }
-        history.text = brain.description
+        userIsInTheMiddleOfTypingANumber = false
     }
 
     var operandStack = Array<Double>()
@@ -102,13 +120,9 @@ class ViewController: UIViewController {
         println("operandStack = \(operandStack)")
     }
     
-    var displayValue: Double {
-        get {
-            return NSNumberFormatter().numberFromString(display.text!)!.doubleValue
-        }
-        set {
-            userIsInTheMiddleOfTypingANumber = false
-            display.text = newValue != nil ? "\(newValue!)" : " "
+    func performOperation(operation: Double -> Double) {
+        if operandStack.count >= 1 {
+            displayValue = operation(operandStack.removeLast())
         }
     }
 
