@@ -75,6 +75,12 @@ class CalculatorBrain: Printable {
             return returnDesc
         }
     }
+    var descriptionOfLastTerm: String {
+        get {
+            let (description, _) = describe(opStack)
+            return description
+        }
+    }
     var program: AnyObject {
         get {
             return opStack.map { $0.description }
@@ -87,6 +93,8 @@ class CalculatorBrain: Printable {
                         newOpStack.append(op)
                     } else if let operand = NSNumberFormatter().numberFromString(opSymbol)?.doubleValue {
                         newOpStack.append(.Operand(operand))
+                    } else {
+                        newOpStack.append(.Variable(opSymbol))
                     }
                     opStack = newOpStack
                 }
@@ -241,6 +249,11 @@ class CalculatorBrain: Printable {
     func evaluate() -> Double? {
         let (result, remainingOps) = evaluate(opStack)
         println("\(opStack) = \(result ?? 0) with \(remainingOps) left over")
+        if result != nil {
+            if result!.isNaN || result!.isInfinite {
+                return nil
+            }
+        }
         return result
     }
     

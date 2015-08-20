@@ -61,10 +61,10 @@
                                 </state>
                                 <variation key="default">
                                     <mask key="constraints">
-                                        <exclude reference="caj-vx-GGB"/>
+                                        <exclude reference="CrD-z4-GNJ"/>
                                         <exclude reference="Puh-VA-a62"/>
                                         <exclude reference="VRn-gt-XVs"/>
-                                        <exclude reference="CrD-z4-GNJ"/>
+                                        <exclude reference="caj-vx-GGB"/>
                                     </mask>
                                 </variation>
                                 <connections>
@@ -85,10 +85,10 @@
                                 </state>
                                 <variation key="default">
                                     <mask key="constraints">
+                                        <exclude reference="4Ch-3K-Eio"/>
                                         <exclude reference="5Hv-1q-9L8"/>
                                         <exclude reference="aZU-IT-j1d"/>
                                         <exclude reference="rBX-dt-Cdf"/>
-                                        <exclude reference="4Ch-3K-Eio"/>
                                     </mask>
                                 </variation>
                                 <connections>
@@ -236,7 +236,7 @@
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="lU1-KO-ECv">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <mutableString key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</mutableString>
+                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="24"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
@@ -295,6 +295,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="PJh-be-n6Z"/>
+        <segue reference="xgq-K5-TRT"/>
     </inferredMetricsTieBreakers>
 </document>
