@@ -22,6 +22,7 @@ class ViewController: UIViewController {
         case "π":
             if userIsInTheMiddleOfTypingANumber { enter() }
             displayValue = M_PI
+            enter()
         case ".":
             if display.text!.rangeOfString(digit) != nil { return }
             fallthrough
@@ -39,16 +40,9 @@ class ViewController: UIViewController {
             }
         }
         if userIsInTheMiddleOfTypingANumber { enter() }
-        history.text! += operation + "|"
-        switch operation {
-        case "×": performOperation({ (op1: Double, op2:Double) -> Double in return op2 * op1 })
-        case "÷": performOperation({ (op1, op2) in return op2 / op1 })
-        case "+": performOperation({ $1 + $0 })
-        case "−": performOperation() { $1 - $0 }
-        case "√": performOperation { sqrt($0) }
-        case "sin": performOperation { sin($0) }
-        case "cos": performOperation { cos($0) }
-        default: break
+        history.text! += operation + " ="
+        if let displayValue = brain.performOperation(operation) {
+            enter()
         }
     }
     
@@ -64,17 +58,14 @@ class ViewController: UIViewController {
 
     @IBAction func clear() {
         userIsInTheMiddleOfTypingANumber = false
-        operandStack = [];
-        display.text = "0";
         history.text = "";
         displayValue = 0;
     }
 
     @IBAction func enter() {
         userIsInTheMiddleOfTypingANumber = false
-        operandStack.append(displayValue)
-        history.text! += display.text! + "|"
-        println("operandStack = \(operandStack)")
+        displayValue = brain.pushOperand(displayValue!)
+        history.text! += display.text! + " "
     }
     
     func performOperation(operation: (Double, Double) -> Double) {
@@ -89,14 +80,13 @@ class ViewController: UIViewController {
         }
     }
 
-    var displayValue: Double {
+    var displayValue: Double? {
         get {
             return NSNumberFormatter().numberFromString(display.text!) as? Double
         }
         set {
             userIsInTheMiddleOfTypingANumber = false
-            display.text = "\(newValue)"
-            enter()
+            display.text = newValue != nil ? "\(newValue!)" : ""
         }
     }
 

@@ -40,6 +40,7 @@ class CalculatorBrain {
         learnOp(Op.BinaryOperation("÷") { $1 / $0 })
         learnOp(Op.BinaryOperation("+",  +))
         learnOp(Op.BinaryOperation("-") {$1 - $0})
+        learnOp(Op.UnaryOperation("±") { -1 * $0 })
         learnOp(Op.UnaryOperation("√", sqrt))
         learnOp(Op.UnaryOperation("sin", sin))
         learnOp(Op.UnaryOperation("cos", cos))
@@ -71,7 +72,7 @@ class CalculatorBrain {
     
     func evaluate() -> Double? {
         let (result, remainingOps) = evaluate(opStack)
-        println("\(opStack) = \(result) with \(remainingOps) left over")
+        println("\(opStack) = \(result!) with \(remainingOps) left over")
         return result
     }
     
