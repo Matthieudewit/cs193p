@@ -46,7 +46,7 @@ class TweetsTableViewController: UITableViewController, UITextFieldDelegate {
         }
     }
 
-    private struct Storyboard {
+    fileprivate struct Storyboard {
         static let TweetCellReuseIdentifier = "Tweet"
         static let ShowMentionsSegueIdentifier = "Show Mentions"
         static let ShowCollectionSegueIdentifier = "Show Images"
@@ -61,22 +61,22 @@ class TweetsTableViewController: UITableViewController, UITextFieldDelegate {
         refresh()
     }
     
-    private func refresh() {
+    fileprivate func refresh() {
         if refreshControl != nil {
             refreshControl?.beginRefreshing()
         }
         refresh(refreshControl)
     }
 
-    @IBAction func refresh(sender: UIRefreshControl?) {
+    @IBAction func refresh(_ sender: UIRefreshControl?) {
         if searchText != nil {
             History.append(searchText!)
             if let request = nextRequestToAttempt {
                 request.fetchTweets { (newTweets) -> Void in
-                    dispatch_async(dispatch_get_main_queue()) { () -> Void in
+                    DispatchQueue.main.async { () -> Void in
                         if newTweets.count > 0 {
                             self.lastSuccesfulRequest = request
-                            self.tweets.insert(newTweets, atIndex: 0)
+                            self.tweets.insert(newTweets, at: 0)
                             self.tableView.reloadData()
                             sender?.endRefreshing()
                         }
@@ -88,7 +88,7 @@ class TweetsTableViewController: UITableViewController, UITextFieldDelegate {
         }
     }
 
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == searchTextField {
             textField.resignFirstResponder()
             searchText = textField.text
@@ -98,36 +98,36 @@ class TweetsTableViewController: UITableViewController, UITextFieldDelegate {
     
     // MARK: - Table view data source
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return tweets.count
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tweets[section].count
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(Storyboard.TweetCellReuseIdentifier, forIndexPath: indexPath) as! TweetTableViewCell
-        cell.tweet = tweets[indexPath.section][indexPath.row]
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: Storyboard.TweetCellReuseIdentifier, for: indexPath) as! TweetTableViewCell
+        cell.tweet = tweets[(indexPath as NSIndexPath).section][(indexPath as NSIndexPath).row]
         return cell
     }
 
     // MARK: - Navigation
     
-    @IBAction func searchTweetsSegue(segue: UIStoryboardSegue) {
+    @IBAction func searchTweetsSegue(_ segue: UIStoryboardSegue) {
     }
 
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == nil { return }
         switch segue.identifier! {
         case Storyboard.ShowMentionsSegueIdentifier:
-            if let mentionsController = segue.destinationViewController as? MentionsTableViewController {
-                if let senderTweetCell = sender as? TweetTableViewCell where senderTweetCell.tweet != nil {
+            if let mentionsController = segue.destination as? MentionsTableViewController {
+                if let senderTweetCell = sender as? TweetTableViewCell , senderTweetCell.tweet != nil {
                     mentionsController.tweet = senderTweetCell.tweet!
                 }
             }
         case Storyboard.ShowCollectionSegueIdentifier:
-            if let collectionController = segue.destinationViewController as? ImagesCollectionViewController {
+            if let collectionController = segue.destination as? ImagesCollectionViewController {
                 collectionController.tweets = tweets
             }
         default:

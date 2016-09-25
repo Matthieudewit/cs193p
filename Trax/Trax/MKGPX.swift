@@ -17,8 +17,8 @@ extension GPX {
             set { latitude = newValue.latitude; longitude = newValue.longitude }
         }
         
-        override var thumbnailURL: NSURL? { return links.first?.url }
-        override var imageURL: NSURL? { return links.first?.url }
+        override var thumbnailURL: URL? { return links.first?.url as URL? }
+        override var imageURL: URL? { return links.first?.url as URL? }
 
 
     }
@@ -30,13 +30,13 @@ extension GPX.Waypoint: MKAnnotation {
     var subtitle: String? { return info }
     var coordinate: CLLocationCoordinate2D { return CLLocationCoordinate2D(latitude: latitude, longitude: longitude) }
     
-    var thumbnailURL: NSURL? { return getImageURLOfType("thumbnail") }
-    var imageURL: NSURL? { return getImageURLOfType("large") }
+    var thumbnailURL: URL? { return getImageURLOfType("thumbnail") }
+    var imageURL: URL? { return getImageURLOfType("large") }
 
-    private func getImageURLOfType(type: String) -> NSURL? {
+    fileprivate func getImageURLOfType(_ type: String) -> URL? {
         for link in links {
             if link.type == type {
-                return link.url
+                return link.url as URL?
             }
         }
         return nil

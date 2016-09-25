@@ -9,7 +9,7 @@
 import UIKit
 
 protocol GraphViewDataSource: class {
-    func yForX(x: Double) -> Double?
+    func yForX(_ x: Double) -> Double?
 }
 
 @IBDesignable
@@ -17,7 +17,7 @@ class GraphView: UIView {
 
 
     @IBInspectable
-    var color: UIColor = UIColor.blueColor() {
+    var color: UIColor = UIColor.blue {
         didSet { setNeedsDisplay() }
     }
     @IBInspectable
@@ -25,7 +25,7 @@ class GraphView: UIView {
         didSet { setNeedsDisplay() }
     }
     @IBInspectable
-    var origin: CGPoint = CGPointZero {
+    var origin: CGPoint = CGPoint.zero {
         didSet { setNeedsDisplay() }
     }
     @IBInspectable
@@ -33,7 +33,7 @@ class GraphView: UIView {
         didSet { setNeedsDisplay() }
     }
     @IBInspectable
-    var axesColor: UIColor = UIColor.blackColor() {
+    var axesColor: UIColor = UIColor.black {
         didSet { setNeedsDisplay() }
     }
     
@@ -41,7 +41,7 @@ class GraphView: UIView {
     
     weak var dataSource: GraphViewDataSource?
     
-    override func drawRect(rect: CGRect) {
+    override func draw(_ rect: CGRect) {
         let graphCurve = UIBezierPath()
         var graphStart = true
         for rectX in Int(rect.minX)...Int(rect.maxX) {
@@ -50,10 +50,10 @@ class GraphView: UIView {
                 let rectY = origin.y-CGFloat(graphY)*scale
                 let graphPoint = CGPoint(x: CGFloat(rectX), y: CGFloat(rectY))
                 if graphStart == true {
-                    graphCurve.moveToPoint(graphPoint)
+                    graphCurve.move(to: graphPoint)
                     graphStart = false
                 } else {
-                    graphCurve.addLineToPoint(graphPoint)
+                    graphCurve.addLine(to: graphPoint)
                 }
             } else {
                 graphStart = true
@@ -67,10 +67,10 @@ class GraphView: UIView {
         axesDrawer.drawAxesInRect(self.bounds, origin: origin, pointsPerUnit: scale)
     }
     
-    func centerView(gesture: UITapGestureRecognizer) {
+    func centerView(_ gesture: UITapGestureRecognizer) {
         switch gesture.state {
-        case .Ended:
-            let translation = gesture.locationInView(self)
+        case .ended:
+            let translation = gesture.location(in: self)
             origin.x = translation.x
             origin.y = translation.y
         default:
@@ -78,18 +78,18 @@ class GraphView: UIView {
         }
     }
     
-    func moveView(gesture: UIPanGestureRecognizer) {
+    func moveView(_ gesture: UIPanGestureRecognizer) {
         switch gesture.state {
-        case .Began:
-            snapshot = snapshotViewAfterScreenUpdates(false)
+        case .began:
+            snapshot = snapshotView(afterScreenUpdates: false)
             snapshot!.alpha = 0.7
             self.addSubview(snapshot!)
-        case .Changed:
-            let translation = gesture.translationInView(self)
+        case .changed:
+            let translation = gesture.translation(in: self)
             snapshot!.center.x += translation.x
             snapshot!.center.y += translation.y
-            gesture.setTranslation(CGPointZero, inView: self)
-        case .Ended:
+            gesture.setTranslation(CGPoint.zero, in: self)
+        case .ended:
             origin.x += snapshot!.frame.origin.x
             origin.y += snapshot!.frame.origin.y
             snapshot!.removeFromSuperview()
@@ -99,20 +99,20 @@ class GraphView: UIView {
         }
     }
     
-    func zoomView(gesture: UIPinchGestureRecognizer) {
+    func zoomView(_ gesture: UIPinchGestureRecognizer) {
         switch gesture.state {
-        case .Began:
-            snapshot = snapshotViewAfterScreenUpdates(false)
+        case .began:
+            snapshot = snapshotView(afterScreenUpdates: false)
             snapshot!.alpha = 0.7
             snapshot!.center = origin
             self.addSubview(snapshot!)
-        case .Changed:
+        case .changed:
             let center = snapshot!.center
             snapshot!.bounds.size.width *= gesture.scale
             snapshot!.bounds.size.height *= gesture.scale
             snapshot!.center = center
             gesture.scale = 1.0
-        case .Ended:
+        case .ended:
             let scaleFactor = snapshot!.bounds.size.height / self.bounds.size.height
             scale *= scaleFactor
             snapshot!.removeFromSuperview()

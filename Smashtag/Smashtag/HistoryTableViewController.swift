@@ -10,7 +10,7 @@ import UIKit
 
 class HistoryTableViewController: UITableViewController {
     
-    private struct Storyboard {
+    fileprivate struct Storyboard {
         static let MentionHistoryCellReuseIdentifier = "Mention History"
         static let SearchTweetsSegueIdentifier = "Search History"
     }
@@ -21,7 +21,7 @@ class HistoryTableViewController: UITableViewController {
         super.viewDidLoad()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tableView.reloadData()
     }
@@ -32,52 +32,52 @@ class HistoryTableViewController: UITableViewController {
 
     // MARK: - User actions
 
-    @IBAction func clearHistory(sender: UIBarButtonItem) {
-        let alert = UIAlertController(title: "Clear all searched mentions?", message: "Action can't be undone", preferredStyle: UIAlertControllerStyle.Alert)
-        let clearAction = UIAlertAction(title: "Clear", style: UIAlertActionStyle.Destructive) {
+    @IBAction func clearHistory(_ sender: UIBarButtonItem) {
+        let alert = UIAlertController(title: "Clear all searched mentions?", message: "Action can't be undone", preferredStyle: UIAlertControllerStyle.alert)
+        let clearAction = UIAlertAction(title: "Clear", style: UIAlertActionStyle.destructive) {
             (action: UIAlertAction!) -> Void in
             History.clear()
             self.tableView.reloadData()
         }
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel) {
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) {
             (action: UIAlertAction!) -> Void in
         }
         alert.addAction(cancelAction)
         alert.addAction(clearAction)
-        presentViewController(alert, animated: true, completion: nil)
+        present(alert, animated: true, completion: nil)
     }
 
     // MARK: - Table view data source
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return History.searchedMentions.count
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(Storyboard.MentionHistoryCellReuseIdentifier, forIndexPath: indexPath)
-        cell.textLabel?.text = History.searchedMentions[indexPath.row]
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: Storyboard.MentionHistoryCellReuseIdentifier, for: indexPath)
+        cell.textLabel?.text = History.searchedMentions[(indexPath as NSIndexPath).row]
         return cell
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let navigationController = tabBarController?.viewControllers?[0] as? UINavigationController {
             if let tweetsTableController = navigationController.viewControllers[0] as? TweetsTableViewController {
-                let cell = tableView.cellForRowAtIndexPath(indexPath)
+                let cell = tableView.cellForRow(at: indexPath)
                 tweetsTableController.searchText = cell?.textLabel?.text
                 tabBarController?.selectedIndex = 0
             }
         }
     }
     
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         switch editingStyle {
-        case .Delete:
-            History.removeAtIndex(indexPath.row)
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+        case .delete:
+            History.removeAtIndex((indexPath as NSIndexPath).row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
         default:
             break
         }
@@ -85,7 +85,7 @@ class HistoryTableViewController: UITableViewController {
 
     // MARK: - Navigation
 
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 
     }
 
@@ -94,15 +94,15 @@ class HistoryTableViewController: UITableViewController {
 
 
 struct History {
-    static private let key = "History.SearchedMentions"
-    static private let capacity = 100
-    static private var mentions: [String] = NSUserDefaults.standardUserDefaults().objectForKey(History.key) as? [String] ?? [] {
+    static fileprivate let key = "History.SearchedMentions"
+    static fileprivate let capacity = 100
+    static fileprivate var mentions: [String] = UserDefaults.standard.object(forKey: History.key) as? [String] ?? [] {
         didSet {
             let aboveCapacity = History.searchedMentions.count - History.capacity
             if aboveCapacity >= 0 {
-                History.mentions.removeRange(0 ... aboveCapacity)
+                History.mentions.removeSubrange(0 ... aboveCapacity)
             }
-            NSUserDefaults.standardUserDefaults().setObject(searchedMentions, forKey: History.key)
+            UserDefaults.standard.set(searchedMentions, forKey: History.key)
         }
     }
     
@@ -110,13 +110,13 @@ struct History {
         get { return History.mentions }
     }
     
-    static func append(searchedMention: String) {
+    static func append(_ searchedMention: String) {
         History.mentions = History.mentions.filter { $0 != searchedMention ? true : false }
-        History.mentions.insert(searchedMention, atIndex: 0)
+        History.mentions.insert(searchedMention, at: 0)
     }
     
-    static func removeAtIndex(index: Int) {
-        History.mentions.removeAtIndex(index)
+    static func removeAtIndex(_ index: Int) {
+        History.mentions.remove(at: index)
     }
 
     static func clear() {

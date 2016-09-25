@@ -33,10 +33,10 @@ class TweetTableViewCell: UITableViewCell {
             tweetScreenNameLabel?.text = "\(tweet.user)"
             
             if let url = tweet.user.profileImageURL {
-                let qos = Int(QOS_CLASS_USER_INITIATED.rawValue)
-                dispatch_async(dispatch_get_global_queue(qos, 0)) {
-                    let imageData = NSData(contentsOfURL: url)
-                    dispatch_async(dispatch_get_main_queue()) {
+                let qos = Int(DispatchQoS.QoSClass.userInitiated.rawValue)
+                DispatchQueue.global(priority: qos).async {
+                    let imageData = try? Data(contentsOf: url)
+                    DispatchQueue.main.async {
                         if url == tweet.user.profileImageURL {
                             if imageData != nil {
                                 self.tweetProfileImageView?.image = UIImage(data: imageData!)
@@ -48,13 +48,13 @@ class TweetTableViewCell: UITableViewCell {
                 }
             }
             
-            let formatter = NSDateFormatter()
-            if NSDate().timeIntervalSinceDate(tweet.created) > 24*60*60 {
-                formatter.dateStyle = NSDateFormatterStyle.ShortStyle
+            let formatter = DateFormatter()
+            if Date().timeIntervalSince(tweet.created as Date) > 24*60*60 {
+                formatter.dateStyle = DateFormatter.Style.short
             } else {
-                formatter.timeStyle = NSDateFormatterStyle.ShortStyle
+                formatter.timeStyle = DateFormatter.Style.short
             }
-            tweetCreatedLabel?.text = formatter.stringFromDate(tweet.created)
+            tweetCreatedLabel?.text = formatter.string(from: tweet.created as Date)
         }
         
     }
@@ -69,13 +69,13 @@ private extension Tweet {
             }
             let attributedText = NSMutableAttributedString(string: text)
             for hashtag in self.hashtags {
-                attributedText.addAttribute(NSForegroundColorAttributeName, value: UIColor.brownColor(), range: hashtag.nsrange)
+                attributedText.addAttribute(NSForegroundColorAttributeName, value: UIColor.brown, range: hashtag.nsrange)
             }
             for userMention in self.userMentions {
-                attributedText.addAttribute(NSForegroundColorAttributeName, value: UIColor.orangeColor(), range: userMention.nsrange)
+                attributedText.addAttribute(NSForegroundColorAttributeName, value: UIColor.orange, range: userMention.nsrange)
             }
             for url in self.urls {
-                attributedText.addAttribute(NSForegroundColorAttributeName, value: UIColor.blueColor(), range: url.nsrange)
+                attributedText.addAttribute(NSForegroundColorAttributeName, value: UIColor.blue, range: url.nsrange)
             }
 
             return attributedText

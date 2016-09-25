@@ -14,16 +14,16 @@ import Foundation
 // note carefully the comments on the two range properties in an IndexedKeyword
 // Tweet instances re created by fetching from Twitter using a TwitterRequest
 
-public class Tweet : CustomStringConvertible
+open class Tweet : CustomStringConvertible
 {
-    public let text: String
-    public let user: User
-    public let created: NSDate
-    public let id: String?
-    public let media: [MediaItem]
-    public let hashtags: [IndexedKeyword]
-    public let urls: [IndexedKeyword]
-    public let userMentions: [IndexedKeyword]
+    open let text: String
+    open let user: User
+    open let created: Date
+    open let id: String?
+    open let media: [MediaItem]
+    open let hashtags: [IndexedKeyword]
+    open let urls: [IndexedKeyword]
+    open let userMentions: [IndexedKeyword]
 
     public struct IndexedKeyword: CustomStringConvertible
     {
@@ -32,19 +32,19 @@ public class Tweet : CustomStringConvertible
         public let nsrange: NSRange             // index into an NS[Attributed]String made from the Tweet's text
 
         public init?(data: NSDictionary?, inText: String, prefix: String?) {
-            let indices = data?.valueForKeyPath(TwitterKey.Entities.Indices) as? NSArray
-            if let startIndex = (indices?.firstObject as? NSNumber)?.integerValue {
-                if let endIndex = (indices?.lastObject as? NSNumber)?.integerValue {
+            let indices = data?.value(forKeyPath: TwitterKey.Entities.Indices) as? NSArray
+            if let startIndex = (indices?.firstObject as? NSNumber)?.intValue {
+                if let endIndex = (indices?.lastObject as? NSNumber)?.intValue {
                     let length = inText.characters.count
                     if length > 0 {
                         let start = max(min(startIndex, length-1), 0)
                         let end = max(min(endIndex, length), 0)
                         if end > start {
-                            var range = inText.startIndex.advancedBy(start)...inText.startIndex.advancedBy(end-1)
-                            var keyword = inText.substringWithRange(range)
+                            var range = inText.characters.index(inText.startIndex, offsetBy: start)...inText.characters.index(inText.startIndex, offsetBy: end-1)
+                            var keyword = inText.substring(with: range)
                             if prefix != nil && !keyword.hasPrefix(prefix!) && start > 0 {
-                                range = inText.startIndex.advancedBy(start-1)...inText.startIndex.advancedBy(end-2)
-                                keyword = inText.substringWithRange(range)
+                                range = inText.characters.index(inText.startIndex, offsetBy: start-1)...inText.characters.index(inText.startIndex, offsetBy: end-2)
+                                keyword = inText.substring(with: range)
                             }
                             if prefix == nil || keyword.hasPrefix(prefix!) {
                                 nsrange = inText.rangeOfString(keyword, nearRange: NSMakeRange(startIndex, endIndex-startIndex))
@@ -64,21 +64,21 @@ public class Tweet : CustomStringConvertible
         public var description: String { get { return "\(keyword) (\(nsrange.location), \(nsrange.location+nsrange.length-1))" } }
     }
     
-    public var description: String { return "\(user) - \(created)\n\(text)\nhashtags: \(hashtags)\nurls: \(urls)\nuser_mentions: \(userMentions)" + (id == nil ? "" : "\nid: \(id!)") }
+    open var description: String { return "\(user) - \(created)\n\(text)\nhashtags: \(hashtags)\nurls: \(urls)\nuser_mentions: \(userMentions)" + (id == nil ? "" : "\nid: \(id!)") }
 
     // MARK: - Private Implementation
 
     init?(data: NSDictionary?) {
-        if let user = User(data: data?.valueForKeyPath(TwitterKey.User) as? NSDictionary)
-            , text = data?.valueForKeyPath(TwitterKey.Text) as? String
-            , created = (data?.valueForKeyPath(TwitterKey.Created) as? String)?.asTwitterDate
+        if let user = User(data: data?.value(forKeyPath: TwitterKey.User) as? NSDictionary)
+            , let text = data?.value(forKeyPath: TwitterKey.Text) as? String
+            , let created = (data?.value(forKeyPath: TwitterKey.Created) as? String)?.asTwitterDate
         {
             self.user = user
             self.text = text
             self.created = created
-            id = data?.valueForKeyPath(TwitterKey.ID) as? String
+            id = data?.value(forKeyPath: TwitterKey.ID) as? String
             var media = [MediaItem]()
-            if let mediaEntities = data?.valueForKeyPath(TwitterKey.Media) as? NSArray {
+            if let mediaEntities = data?.value(forKeyPath: TwitterKey.Media) as? NSArray {
                 for mediaData in mediaEntities {
                     if let mediaItem = MediaItem(data: mediaData as? NSDictionary) {
                         media.append(mediaItem)
@@ -86,11 +86,11 @@ public class Tweet : CustomStringConvertible
                 }
             }
             self.media = media
-            let hashtagMentionsArray = data?.valueForKeyPath(TwitterKey.Entities.Hashtags) as? NSArray
+            let hashtagMentionsArray = data?.value(forKeyPath: TwitterKey.Entities.Hashtags) as? NSArray
             self.hashtags = Tweet.getIndexedKeywords(hashtagMentionsArray, inText: text, prefix: "#")
-            let urlMentionsArray = data?.valueForKeyPath(TwitterKey.Entities.URLs) as? NSArray
+            let urlMentionsArray = data?.value(forKeyPath: TwitterKey.Entities.URLs) as? NSArray
             self.urls = Tweet.getIndexedKeywords(urlMentionsArray, inText: text, prefix: "h")
-            let userMentionsArray = data?.valueForKeyPath(TwitterKey.Entities.UserMentions) as? NSArray
+            let userMentionsArray = data?.value(forKeyPath: TwitterKey.Entities.UserMentions) as? NSArray
             self.userMentions = Tweet.getIndexedKeywords(userMentionsArray, inText: text, prefix: "@")
             return
         }
@@ -100,7 +100,7 @@ public class Tweet : CustomStringConvertible
         // we could make these implicitly-unwrapped optionals, but they should never be nil, ever
         self.user = User()
         self.text = ""
-        self.created = NSDate()
+        self.created = Date()
         self.id = nil
         self.media = []
         self.hashtags = []
@@ -109,7 +109,7 @@ public class Tweet : CustomStringConvertible
         return nil
     }
 
-    class private func getIndexedKeywords(dictionary: NSArray?, inText: String, prefix: String? = nil) -> [IndexedKeyword] {
+    class fileprivate func getIndexedKeywords(_ dictionary: NSArray?, inText: String, prefix: String? = nil) -> [IndexedKeyword] {
         var results = [IndexedKeyword]()
         if let indexedKeywords = dictionary {
             for indexedKeywordData in indexedKeywords {
@@ -137,30 +137,30 @@ public class Tweet : CustomStringConvertible
 }
 
 private extension NSString {
-    func rangeOfString(substring: NSString, nearRange: NSRange) -> NSRange {
+    func rangeOfString(_ substring: NSString, nearRange: NSRange) -> NSRange {
         var start = max(min(nearRange.location, length-1), 0)
         var end = max(min(nearRange.location + nearRange.length, length), 0)
         var done = false
         while !done {
-            let range = rangeOfString(substring as String, options: NSStringCompareOptions.CaseInsensitiveSearch, range: NSMakeRange(start, end-start))
+            let range = self.range(of: substring as String, options: NSString.CompareOptions.caseInsensitive, range: NSMakeRange(start, end-start))
             if range.location != NSNotFound {
                 return range
             }
             done = true
-            if start > 0 { start-- ; done = false }
-            if end < length { end++ ; done = false }
+            if start > 0 { start -= 1 ; done = false }
+            if end < length { end += 1 ; done = false }
         }
         return NSMakeRange(NSNotFound, 0)
     }
 }
 
 private extension String {
-    var asTwitterDate: NSDate? {
+    var asTwitterDate: Date? {
         get {
-            let dateFormatter = NSDateFormatter()
-            dateFormatter.locale = NSLocale(localeIdentifier: "C")
+            let dateFormatter = DateFormatter()
+            dateFormatter.locale = Locale(identifier: "C")
             dateFormatter.dateFormat = "EEE MMM dd HH:mm:ss Z yyyy"
-            return dateFormatter.dateFromString(self)
+            return dateFormatter.date(from: self)
         }
     }
 }

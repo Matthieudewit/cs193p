@@ -10,7 +10,7 @@ import UIKit
 
 class ImageTableViewCell: UITableViewCell {
 
-    var imageURL: NSURL? {
+    var imageURL: URL? {
         didSet {
             largeImageView.image = nil
             fetchImage()
@@ -23,16 +23,16 @@ class ImageTableViewCell: UITableViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
+        accessoryType = UITableViewCellAccessoryType.disclosureIndicator
     }
     
-    private func fetchImage() {
+    fileprivate func fetchImage() {
         if let url = imageURL {
             spinner.startAnimating()
-            let qos = Int(QOS_CLASS_USER_INITIATED.rawValue)
-            dispatch_async(dispatch_get_global_queue(qos, 0)) {
-                let imageData = NSData(contentsOfURL: url)
-                dispatch_async(dispatch_get_main_queue()) {
+            let qos = Int(DispatchQoS.QoSClass.userInitiated.rawValue)
+            DispatchQueue.global(priority: qos).async {
+                let imageData = try? Data(contentsOf: url)
+                DispatchQueue.main.async {
                     if url == self.imageURL {
                         if imageData != nil {
                             self.largeImageView.image = UIImage(data: imageData!)

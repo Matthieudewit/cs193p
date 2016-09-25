@@ -8,6 +8,26 @@
 
 import UIKit
 import MobileCoreServices
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
 
 class EditWaypointViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     
@@ -24,7 +44,7 @@ class EditWaypointViewController: UIViewController, UITextFieldDelegate, UINavig
         updateUI()
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         observeTextFields()
     }
@@ -35,17 +55,17 @@ class EditWaypointViewController: UIViewController, UITextFieldDelegate, UINavig
         updateImage()
     }
     
-    @IBAction func done(sender: UIBarButtonItem) {
-        presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
+    @IBAction func done(_ sender: UIBarButtonItem) {
+        presentingViewController?.dismiss(animated: true, completion: nil)
     }
 
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         if let textFieldObserver = nameTextFieldObserver {
-            NSNotificationCenter.defaultCenter().removeObserver(textFieldObserver)
+            NotificationCenter.default.removeObserver(textFieldObserver)
         }
         if let textFieldObserver = infoTextFieldObserver {
-            NSNotificationCenter.defaultCenter().removeObserver(textFieldObserver)
+            NotificationCenter.default.removeObserver(textFieldObserver)
         }
 
     }
@@ -62,24 +82,24 @@ class EditWaypointViewController: UIViewController, UITextFieldDelegate, UINavig
     }
 
     @IBAction func takePhoto() {
-        if UIImagePickerController.isSourceTypeAvailable(.Camera) {
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
             let picker = UIImagePickerController()
-            picker.sourceType = .Camera
+            picker.sourceType = .camera
             picker.mediaTypes = [String(kUTTypeImage)]
             picker.allowsEditing = true
             picker.delegate = self
-            presentViewController(picker, animated: true, completion: nil)
+            present(picker, animated: true, completion: nil)
         }
     }
     
     func saveImageInWaypoint() {
         if let image = imageView.image {
             if let imageData = UIImageJPEGRepresentation(image, 1.0) {
-                let fileManager = NSFileManager()
-                if let docsDir = fileManager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first {
-                    let unique = NSDate.timeIntervalSinceReferenceDate()
-                    let url = docsDir.URLByAppendingPathComponent("\(unique).jpg")
-                    if imageData.writeToURL(url, atomically: true) {
+                let fileManager = FileManager()
+                if let docsDir = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
+                    let unique = Date.timeIntervalSinceReferenceDate
+                    let url = docsDir.appendingPathComponent("\(unique).jpg")
+                    if (try? imageData.write(to: url, options: [.atomic])) != nil {
                         waypoint?.links = [GPX.Link(href: url.absoluteString)]
                     }
                 }
@@ -87,7 +107,7 @@ class EditWaypointViewController: UIViewController, UITextFieldDelegate, UINavig
         }
     }
 
-    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String:AnyObject]) {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String:Any]) {
         var image = info[UIImagePickerControllerEditedImage] as? UIImage
         if image == nil {
             image = info[UIImagePickerControllerOriginalImage] as? UIImage
@@ -95,11 +115,11 @@ class EditWaypointViewController: UIViewController, UITextFieldDelegate, UINavig
         imageView.image = image
         makeRoomForImage()
         saveImageInWaypoint()
-        dismissViewControllerAnimated(true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
     
-    func imagePickerControllerDidCancel(picker: UIImagePickerController) {
-        dismissViewControllerAnimated(true, completion: nil)
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
     }
 
 
@@ -116,16 +136,16 @@ class EditWaypointViewController: UIViewController, UITextFieldDelegate, UINavig
     var infoTextFieldObserver: NSObjectProtocol?
 
     func observeTextFields() {
-        let center = NSNotificationCenter.defaultCenter()
-        let queue = NSOperationQueue.mainQueue()
-        nameTextFieldObserver = center.addObserverForName(UITextFieldTextDidChangeNotification,
+        let center = NotificationCenter.default
+        let queue = OperationQueue.main
+        nameTextFieldObserver = center.addObserver(forName: NSNotification.Name.UITextFieldTextDidChange,
             object: nameTextField,
             queue: queue) { notification in
                 if let waypoint = self.waypoint {
                     waypoint.name = self.nameTextField.text
                 }
         }
-        infoTextFieldObserver = center.addObserverForName(UITextFieldTextDidChangeNotification,
+        infoTextFieldObserver = center.addObserver(forName: NSNotification.Name.UITextFieldTextDidChange,
             object: infoTextField,
             queue: queue) { notification in
                 if let waypoint = self.waypoint {
@@ -134,7 +154,7 @@ class EditWaypointViewController: UIViewController, UITextFieldDelegate, UINavig
         }
     }
 
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
     }
@@ -145,12 +165,12 @@ class EditWaypointViewController: UIViewController, UITextFieldDelegate, UINavig
 extension EditWaypointViewController {
     func updateImage() {
         if let url = waypoint?.imageURL {
-            let qos = Int(QOS_CLASS_USER_INITIATED.rawValue)
-            dispatch_async(dispatch_get_global_queue(qos, 0)) { [weak self] in
-                if let imageData = NSData(contentsOfURL: url) {
+            let qos = Int(DispatchQoS.QoSClass.userInitiated.rawValue)
+            DispatchQueue.global(priority: qos).async { [weak self] in
+                if let imageData = try? Data(contentsOf: url) {
                     if url == self?.waypoint?.imageURL {
                         if let image = UIImage(data: imageData) {
-                            dispatch_async(dispatch_get_main_queue()) {
+                            DispatchQueue.main.async {
                                 self?.imageView.image = image
                                 self?.makeRoomForImage()
                             }
@@ -183,7 +203,7 @@ extension EditWaypointViewController {
             }
         } else {
             extraHeight = -imageView.frame.height
-            imageView.frame = CGRectZero
+            imageView.frame = CGRect.zero
         }
         preferredContentSize = CGSize(width: preferredContentSize.width, height: preferredContentSize.height + extraHeight)
     }

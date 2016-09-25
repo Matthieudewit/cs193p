@@ -10,8 +10,8 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if let ivc = segue.destinationViewController as? ImageViewController {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let ivc = segue.destination as? ImageViewController {
             if let identifier = segue.identifier {
                 switch identifier {
                 case "Earth":

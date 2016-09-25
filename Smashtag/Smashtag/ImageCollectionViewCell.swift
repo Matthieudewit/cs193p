@@ -10,34 +10,34 @@ import UIKit
 
 class ImageCollectionViewCell: UICollectionViewCell {
     
-    var imageURL: NSURL? = nil {
+    var imageURL: URL? = nil {
         didSet {
-            backgroundColor = UIColor.darkGrayColor()
+            backgroundColor = UIColor.darkGray
             imageView.image = nil
             fetchImage()
         }
     }
     
-    var cache: NSCache?
+    var cache: NSCache<AnyObject, AnyObject>?
     
     @IBOutlet weak var imageView: UIImageView!
     
     @IBOutlet weak var spinner: UIActivityIndicatorView!
     
-    private func fetchImage() {
+    fileprivate func fetchImage() {
         if let url = imageURL {
-            if let cacheImageData = cache?.objectForKey(url) as? NSData {
+            if let cacheImageData = cache?.object(forKey: url as AnyObject) as? Data {
                 imageView.image = UIImage(data: cacheImageData)
             }
             spinner.startAnimating()
-            let qos = Int(QOS_CLASS_USER_INITIATED.rawValue)
-            dispatch_async(dispatch_get_global_queue(qos, 0)) {
-                let imageData = NSData(contentsOfURL: url)
-                dispatch_async(dispatch_get_main_queue()) { [unowned self] in
+            let qos = Int(DispatchQoS.QoSClass.userInitiated.rawValue)
+            DispatchQueue.global(priority: qos).async {
+                let imageData = try? Data(contentsOf: url)
+                DispatchQueue.main.async { [unowned self] in
                     if url == self.imageURL {
                         if imageData != nil {
                             self.imageView.image = UIImage(data: imageData!)
-                            self.cache?.setObject(imageData!, forKey: url, cost: imageData!.length)
+                            self.cache?.setObject(imageData!, forKey: url, cost: imageData!.count)
                         } else {
                             self.imageView.image = nil
                         }

@@ -25,8 +25,8 @@ class DropitViewController: UIViewController, UIDynamicAnimatorDelegate {
                 attachment!.action = { [ unowned self ] in
                     if let attachedView = self.attachment!.items.first as? UIView {
                         let path = UIBezierPath()
-                        path.moveToPoint(self.attachment!.anchorPoint)
-                        path.addLineToPoint(attachedView.center)
+                        path.move(to: self.attachment!.anchorPoint)
+                        path.addLine(to: attachedView.center)
                         self.gameView.setPath(path, named: PathNames.Attachment)
                     }
                 }
@@ -65,17 +65,17 @@ class DropitViewController: UIViewController, UIDynamicAnimatorDelegate {
         let barrierSize = dropSize
         let barrierOrigin = CGPoint(x: gameView.bounds.midX-barrierSize.width/2,
             y: gameView.bounds.midY-barrierSize.height/2)
-        let path = UIBezierPath(ovalInRect: CGRect(origin: barrierOrigin, size: barrierSize))
+        let path = UIBezierPath(ovalIn: CGRect(origin: barrierOrigin, size: barrierSize))
         dropitBehavior.addBarrier(path, named: PathNames.MiddleBarrier)
         gameView.setPath(path, named: PathNames.MiddleBarrier)
     }
 
-    @IBAction func drop(sender: UITapGestureRecognizer) {
+    @IBAction func drop(_ sender: UITapGestureRecognizer) {
         drop()
     }
     
-    private func drop() {
-        var frame = CGRect(origin: CGPointZero, size: dropSize)
+    fileprivate func drop() {
+        var frame = CGRect(origin: CGPoint.zero, size: dropSize)
         frame.origin.x = CGFloat.random(dropsPerRow)*dropSize.width
         
         let dropView = UIView(frame: frame)
@@ -86,23 +86,23 @@ class DropitViewController: UIViewController, UIDynamicAnimatorDelegate {
         dropitBehavior.addDrop(dropView)
     }
     
-    @IBAction func grabDrop(sender: UIPanGestureRecognizer) {
-        let gesturePoint = sender.locationInView(gameView)
+    @IBAction func grabDrop(_ sender: UIPanGestureRecognizer) {
+        let gesturePoint = sender.location(in: gameView)
         switch sender.state {
-        case .Began:
+        case .began:
             if let viewToAttach = lastDroppedView {
                 attachment = UIAttachmentBehavior(item: viewToAttach, attachedToAnchor: gesturePoint)
             }
-        case .Changed:
+        case .changed:
             attachment?.anchorPoint = gesturePoint
-        case .Ended:
+        case .ended:
             attachment = nil
         default:
             attachment = nil
         }
     }
 
-    func dynamicAnimatorDidPause(animator: UIDynamicAnimator) {
+    func dynamicAnimatorDidPause(_ animator: UIDynamicAnimator) {
         removeCompletedRow()
     }
     
@@ -116,7 +116,7 @@ class DropitViewController: UIViewController, UIDynamicAnimatorDelegate {
             var dropsFound = [UIView]()
             var rowIsComplete = true
             for _ in 0 ..< dropsPerRow {
-                if let hitView = gameView.hitTest(CGPoint(x: dropFrame.midX, y: dropFrame.midY), withEvent: nil) {
+                if let hitView = gameView.hitTest(CGPoint(x: dropFrame.midX, y: dropFrame.midY), with: nil) {
                     if hitView.superview == gameView {
                         dropsFound.append(hitView)
                     } else {
@@ -138,7 +138,7 @@ class DropitViewController: UIViewController, UIDynamicAnimatorDelegate {
 
 
 private extension CGFloat {
-    static func random(max: Int) -> CGFloat {
+    static func random(_ max: Int) -> CGFloat {
         return CGFloat(arc4random() % UInt32(max))
     }
 }
@@ -146,12 +146,12 @@ private extension CGFloat {
 private extension UIColor {
     class var random: UIColor {
         switch arc4random() % 5 {
-        case 0: return UIColor.greenColor()
-        case 1: return UIColor.blueColor()
-        case 2: return UIColor.orangeColor()
-        case 3: return UIColor.redColor()
-        case 4: return UIColor.purpleColor()
-        default: return UIColor.blackColor()
+        case 0: return UIColor.green
+        case 1: return UIColor.blue
+        case 2: return UIColor.orange
+        case 3: return UIColor.red
+        case 4: return UIColor.purple
+        default: return UIColor.black
         }
     }
 }

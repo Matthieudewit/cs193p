@@ -10,11 +10,11 @@ import UIKit
 
 class DiagnosedHappinessViewController: HapinessViewController, UIPopoverPresentationControllerDelegate {
 
-    private let defaults = NSUserDefaults.standardUserDefaults()
+    fileprivate let defaults = UserDefaults.standard
     
     var diagnosticHistory: [Int] {
-        get { return defaults.objectForKey(History.DefaultsKey) as? [Int] ?? [] }
-        set { defaults.setObject(newValue, forKey: History.DefaultsKey) }
+        get { return defaults.object(forKey: History.DefaultsKey) as? [Int] ?? [] }
+        set { defaults.set(newValue, forKey: History.DefaultsKey) }
     }
 
     override var happiness: Int {
@@ -24,16 +24,16 @@ class DiagnosedHappinessViewController: HapinessViewController, UIPopoverPresent
     }
 
     
-    private struct History {
+    fileprivate struct History {
         static let SegueIdentifier = "Show Diagnostic History"
         static let DefaultsKey = "DiagnosedHappinessViewController.History"
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let identifier = segue.identifier {
             switch identifier {
             case History.SegueIdentifier:
-                if let tvc = segue.destinationViewController as? TextViewController {
+                if let tvc = segue.destination as? TextViewController {
                     if let ppc = tvc.popoverPresentationController {
                         ppc.delegate = self
                     }
@@ -44,8 +44,8 @@ class DiagnosedHappinessViewController: HapinessViewController, UIPopoverPresent
         }
     }
     
-    func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
-        return UIModalPresentationStyle.None
+    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
+        return UIModalPresentationStyle.none
     }
 
 }

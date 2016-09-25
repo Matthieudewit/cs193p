@@ -27,23 +27,23 @@ class ViewController: UIViewController {
         animator.addBehavior(bouncer)
     }
 
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if redBlock == nil {
             redBlock = addBlock()
-            redBlock!.backgroundColor = UIColor.redColor()
+            redBlock!.backgroundColor = UIColor.red
             bouncer.addBlock(redBlock!)
         }
         let motionManager = AppDelegate.Motion.Manager
-        if motionManager.accelerometerAvailable {
-            motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.mainQueue()) {
+        if motionManager.isAccelerometerAvailable {
+            motionManager.startAccelerometerUpdates(to: OperationQueue.main) {
                 (data, error) -> Void in
                 self.bouncer.gravity.gravityDirection = CGVector(dx: data!.acceleration.x, dy: -data!.acceleration.y)
             }
         }
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         AppDelegate.Motion.Manager.stopAccelerometerUpdates()
     }

@@ -10,7 +10,7 @@ import UIKit
 
 class WebsiteViewController: UIViewController, UIWebViewDelegate {
     
-    var websiteURL: NSURL? = nil
+    var websiteURL: URL? = nil
     
     @IBOutlet weak var websiteView: UIWebView! {
         didSet {
@@ -30,7 +30,7 @@ class WebsiteViewController: UIViewController, UIWebViewDelegate {
     
     func fetchWebsite() {
         if websiteURL != nil {
-            websiteView.loadRequest(NSURLRequest(URL: websiteURL!))
+            websiteView.loadRequest(URLRequest(url: websiteURL!))
         }
     }
 
@@ -41,21 +41,21 @@ class WebsiteViewController: UIViewController, UIWebViewDelegate {
     
     // MARK: - Web view delegate
     
-    func webViewDidStartLoad(webView: UIWebView) {
+    func webViewDidStartLoad(_ webView: UIWebView) {
         spinner.startAnimating()
     }
     
-    func webViewDidFinishLoad(webView: UIWebView) {
+    func webViewDidFinishLoad(_ webView: UIWebView) {
         spinner.stopAnimating()
     }
     
-    func webView(webView: UIWebView, didFailLoadWithError error: NSError?) {
+    func webView(_ webView: UIWebView, didFailLoadWithError error: Error) {
         spinner.stopAnimating()
     }
 
     // MARK: - Navigation
 
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     }
 
 }

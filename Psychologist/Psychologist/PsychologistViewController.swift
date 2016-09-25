@@ -10,12 +10,12 @@ import UIKit
 
 class PsychologistsViewController: UIViewController {
 
-    @IBAction func nothing(sender: UIButton) {
-        performSegueWithIdentifier("Show Nothing", sender: nil)
+    @IBAction func nothing(_ sender: UIButton) {
+        performSegue(withIdentifier: "Show Nothing", sender: nil)
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        var destinationController = segue.destinationViewController
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        var destinationController = segue.destination
         if let navigationController = destinationController as? UINavigationController {
             destinationController = navigationController.visibleViewController!
         }

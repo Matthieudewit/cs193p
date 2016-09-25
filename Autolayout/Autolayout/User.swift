@@ -14,9 +14,9 @@ struct User
     let company: String
     let login: String
     let password: String
-    var lastLogin: NSDate
+    var lastLogin: Date
 
-    static func login(login: String, password: String) -> User? {
+    static func login(_ login: String, password: String) -> User? {
         if let user = database[login] {
             if user.password == password {
                 return user
@@ -28,10 +28,10 @@ struct User
     static let database: Dictionary<String, User> = {
         var theDatabase = Dictionary<String, User>()
         for user in [
-            User(name: "John Appleseed", company: "Apple", login: "japple", password: "foo", lastLogin: NSDate.demoRandom()),
-            User(name: "Madison Bumgarner", company: "World Champion San Francisco Giants", login: "madbum", password: "foo", lastLogin: NSDate.demoRandom()),
-            User(name: "John Hennessy", company: "Stanford", login: "hennessy", password: "foo", lastLogin: NSDate.demoRandom()),
-            User(name: "Bad Guy", company: "Criminals, Inc.", login: "baddie", password: "foo", lastLogin: NSDate.demoRandom())
+            User(name: "John Appleseed", company: "Apple", login: "japple", password: "foo", lastLogin: Date.demoRandom()),
+            User(name: "Madison Bumgarner", company: "World Champion San Francisco Giants", login: "madbum", password: "foo", lastLogin: Date.demoRandom()),
+            User(name: "John Hennessy", company: "Stanford", login: "hennessy", password: "foo", lastLogin: Date.demoRandom()),
+            User(name: "Bad Guy", company: "Criminals, Inc.", login: "baddie", password: "foo", lastLogin: Date.demoRandom())
         ] {
             theDatabase[user.login] = user
         }
@@ -39,9 +39,9 @@ struct User
     }()
 }
 
-private extension NSDate {
-    class func demoRandom() -> NSDate {
+private extension Date {
+    static func demoRandom() -> Date {
         let randomIntervalIntoThePast = -Double(arc4random() % 60*60*24*20)
-        return NSDate(timeIntervalSinceNow: randomIntervalIntoThePast)
+        return Date(timeIntervalSinceNow: randomIntervalIntoThePast)
     }
 }

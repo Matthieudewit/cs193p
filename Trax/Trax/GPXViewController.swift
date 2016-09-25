@@ -13,12 +13,12 @@ class GPXViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentat
     
     @IBOutlet weak var mapView: MKMapView! {
         didSet {
-            mapView.mapType = .Satellite
+            mapView.mapType = .satellite
             mapView.delegate = self
         }
     }
     
-    var gpxURL: NSURL? {
+    var gpxURL: URL? {
         didSet {
             clearWaypoints()
             if let url = gpxURL {
@@ -31,7 +31,7 @@ class GPXViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentat
         }
     }
 
-    private struct Constants {
+    fileprivate struct Constants {
         static let LeftCalloutFrame = CGRect(x: 0, y: 0, width: 59, height: 59)
         static let AnnotationViewReuseIdentifier = "Waypoint"
         static let ShowImageSegue = "Show Image"
@@ -39,13 +39,13 @@ class GPXViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentat
         static let EditWayponintPopoverWidth = CGFloat(320)
     }
     
-    private func clearWaypoints() {
+    fileprivate func clearWaypoints() {
         if mapView?.annotations != nil {
             mapView.removeAnnotations(mapView.annotations)
         }
     }
     
-    private func handleWaypoints(waypoints: [GPX.Waypoint]) {
+    fileprivate func handleWaypoints(_ waypoints: [GPX.Waypoint]) {
         mapView.addAnnotations(waypoints)
         mapView.showAnnotations(waypoints, animated: true)
     }
@@ -55,22 +55,22 @@ class GPXViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentat
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let center = NSNotificationCenter.defaultCenter()
-        let queue = NSOperationQueue.mainQueue()
-        let appDelegate = UIApplication.sharedApplication().delegate
-        center.addObserverForName(GPXURL.Notification, object: appDelegate, queue: queue) { notification in
-            if let url = notification.userInfo?[GPXURL.Key] as? NSURL {
+        let center = NotificationCenter.default
+        let queue = OperationQueue.main
+        let appDelegate = UIApplication.shared.delegate
+        center.addObserver(forName: NSNotification.Name(rawValue: GPXURL.Notification), object: appDelegate, queue: queue) { notification in
+            if let url = (notification as NSNotification).userInfo?[GPXURL.Key] as? URL {
                 self.gpxURL = url
             }
         }
         
-        gpxURL = NSURL(string: "http://cs193p.stanford.edu/Vacation.gpx");
+        gpxURL = URL(string: "http://cs193p.stanford.edu/Vacation.gpx");
     }
     
     
-    @IBAction func addWaypoint(sender: UILongPressGestureRecognizer) {
-        if sender.state == UIGestureRecognizerState.Began {
-            let coordinate = mapView.convertPoint(sender.locationInView(mapView), toCoordinateFromView: mapView)
+    @IBAction func addWaypoint(_ sender: UILongPressGestureRecognizer) {
+        if sender.state == UIGestureRecognizerState.began {
+            let coordinate = mapView.convert(sender.location(in: mapView), toCoordinateFrom: mapView)
             let waypoint = GPX.MutableWaypoint(latitude: coordinate.latitude, longitude: coordinate.longitude)
             waypoint.name = "Dropped"
             waypoint.links.append(GPX.Link(href: "http://cs193p.stanford.edu/Images/Panorama.jpg"))
@@ -78,25 +78,25 @@ class GPXViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentat
         }
     }
 
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == nil { return }
         switch segue.identifier! {
         case Constants.ShowImageSegue :
             if let waypoint = (sender as? MKAnnotationView)?.annotation as? GPX.Waypoint {
-                if let waypointImageViewController = segue.destinationViewController.contentViewController as? WaypointImageViewController {
+                if let waypointImageViewController = segue.destination.contentViewController as? WaypointImageViewController {
                     waypointImageViewController.waypoint = waypoint
-                } else if let imageViewController = segue.destinationViewController.contentViewController as? ImageViewController {
+                } else if let imageViewController = segue.destination.contentViewController as? ImageViewController {
                     imageViewController.imageURL = waypoint.imageURL
                     imageViewController.title = waypoint.name
                 }
             }
         case Constants.EditWaypointSegue:
             if let waypoint = (sender as? MKAnnotationView)?.annotation as? GPX.MutableWaypoint {
-                if let editWaypointViewController = segue.destinationViewController.contentViewController as? EditWaypointViewController {
+                if let editWaypointViewController = segue.destination.contentViewController as? EditWaypointViewController {
                     if let popoverPresentationController = editWaypointViewController.popoverPresentationController {
-                        let coordinatePoint = mapView.convertCoordinate(waypoint.coordinate, toPointToView: mapView)
+                        let coordinatePoint = mapView.convert(waypoint.coordinate, toPointTo: mapView)
                         popoverPresentationController.sourceRect = (sender as! MKAnnotationView).popoverSourceRectForCoordinatePoint(coordinatePoint)
-                        let minimumSize = editWaypointViewController.view.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
+                        let minimumSize = editWaypointViewController.view.systemLayoutSizeFitting(UILayoutFittingCompressedSize)
                         editWaypointViewController.preferredContentSize = CGSize(width: Constants.EditWayponintPopoverWidth, height: minimumSize.height)
                         popoverPresentationController.delegate = self
                         
@@ -111,15 +111,15 @@ class GPXViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentat
 
     // MARK: - Map view delegate
     
-    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
-        var annotationView = mapView.dequeueReusableAnnotationViewWithIdentifier(Constants.AnnotationViewReuseIdentifier)
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: Constants.AnnotationViewReuseIdentifier)
         if annotationView == nil {
             annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: Constants.AnnotationViewReuseIdentifier)
             annotationView!.canShowCallout = true
         } else {
             annotationView!.annotation = annotation
         }
-        annotationView!.draggable = annotation is GPX.MutableWaypoint
+        annotationView!.isDraggable = annotation is GPX.MutableWaypoint
 
         annotationView!.leftCalloutAccessoryView = nil
         annotationView!.rightCalloutAccessoryView = nil
@@ -128,47 +128,47 @@ class GPXViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentat
                 annotationView!.leftCalloutAccessoryView = UIButton(frame: Constants.LeftCalloutFrame)
             }
             if annotation is GPX.MutableWaypoint {
-                annotationView!.rightCalloutAccessoryView = UIButton(type: UIButtonType.DetailDisclosure)
+                annotationView!.rightCalloutAccessoryView = UIButton(type: UIButtonType.detailDisclosure)
             }
         }
         return annotationView!
     }
     
-    func mapView(mapView: MKMapView, didDeselectAnnotationView view: MKAnnotationView) {
+    func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
         if let waypoint = view.annotation as? GPX.Waypoint {
             if let thumbnailImageButton = view.leftCalloutAccessoryView as? UIButton {
-                if let imageData = NSData(contentsOfURL: waypoint.thumbnailURL!) { // Blocks main thread
+                if let imageData = try? Data(contentsOf: waypoint.thumbnailURL! as URL) { // Blocks main thread
                     if let image = UIImage(data: imageData) {
-                        thumbnailImageButton.setImage(image, forState: .Normal)
+                        thumbnailImageButton.setImage(image, for: UIControlState())
                     }
                 }
             }
         }
     }
     
-    func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         if let buttonType = (control as? UIButton)?.buttonType {
             switch buttonType {
-            case UIButtonType.DetailDisclosure:
+            case UIButtonType.detailDisclosure:
                 mapView.deselectAnnotation(view.annotation, animated: false)
-                performSegueWithIdentifier(Constants.EditWaypointSegue, sender: view)
+                performSegue(withIdentifier: Constants.EditWaypointSegue, sender: view)
             default:
-                performSegueWithIdentifier(Constants.ShowImageSegue, sender: view)
+                performSegue(withIdentifier: Constants.ShowImageSegue, sender: view)
             }
         }
     }
     
     // MARK: Popover presentation controller delegate
     
-    func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
-        return UIModalPresentationStyle.OverFullScreen
+    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
+        return UIModalPresentationStyle.overFullScreen
     }
     
-    func presentationController(controller: UIPresentationController, viewControllerForAdaptivePresentationStyle style: UIModalPresentationStyle) -> UIViewController? {
+    func presentationController(_ controller: UIPresentationController, viewControllerForAdaptivePresentationStyle style: UIModalPresentationStyle) -> UIViewController? {
         let navigationController = UINavigationController(rootViewController: controller.presentedViewController)
-        let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .ExtraLight))
+        let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .extraLight))
         visualEffectView.frame = navigationController.view.bounds
-        navigationController.view.insertSubview(visualEffectView, atIndex: 0)
+        navigationController.view.insertSubview(visualEffectView, at: 0)
         return navigationController
     }
 }
@@ -185,7 +185,7 @@ extension UIViewController {
 }
 
 extension MKAnnotationView {
-    func popoverSourceRectForCoordinatePoint(coordinatePoint: CGPoint) -> CGRect {
+    func popoverSourceRectForCoordinatePoint(_ coordinatePoint: CGPoint) -> CGRect {
         var popoverSourceRectCenter = coordinatePoint
         popoverSourceRectCenter.x -= frame.width / 2 - centerOffset.x - calloutOffset.x
         popoverSourceRectCenter.y -= frame.height / 2 - centerOffset.y - calloutOffset.y

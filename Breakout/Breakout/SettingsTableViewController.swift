@@ -31,7 +31,7 @@ class SettingsTableViewController: UITableViewController {
         super.viewDidLoad()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         brickRowsStepper.value = Double(AppDelegate.Settings.Brick.Rows)
@@ -47,24 +47,24 @@ class SettingsTableViewController: UITableViewController {
             ballSizeSegmentedControl.selectedSegmentIndex = BallSizeSegmentedControl.Medium.SegmentIndex
         }
         
-        gameContinueAfterGameOverSwitch.on = AppDelegate.Settings.Game.ContinueAfterGameOver
+        gameContinueAfterGameOverSwitch.isOn = AppDelegate.Settings.Game.ContinueAfterGameOver
     }
 
     // MARK: - Settings value change handling
 
-    @IBAction func brickRowsStepperValueChanged(sender: UIStepper) {
+    @IBAction func brickRowsStepperValueChanged(_ sender: UIStepper) {
         let numRows = Int(sender.value)
         brickRowsStepperLabel.text = "\(numRows)";
         AppDelegate.Settings.Brick.Rows = numRows;
     }
 
-    @IBAction func brickColumnsStepperValueChanged(sender: UIStepper) {
+    @IBAction func brickColumnsStepperValueChanged(_ sender: UIStepper) {
         let numColumns = Int(sender.value)
         brickColumnsStepperLabel.text = "\(numColumns)";
         AppDelegate.Settings.Brick.Columns = numColumns;
     }
 
-    @IBAction func ballSizeSegmentedControlValueChanged(sender: UISegmentedControl) {
+    @IBAction func ballSizeSegmentedControlValueChanged(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case BallSizeSegmentedControl.Small.SegmentIndex:
             AppDelegate.Settings.Ball.Size = BallSizeSegmentedControl.Small.Size
@@ -77,12 +77,12 @@ class SettingsTableViewController: UITableViewController {
         }
     }
 
-    @IBAction func ballStartAngleSpreadSliderValueChanged(sender: UISlider) {
+    @IBAction func ballStartAngleSpreadSliderValueChanged(_ sender: UISlider) {
         AppDelegate.Settings.Ball.StartSpreadAngle = CGFloat(sender.value)
     }
 
-    @IBAction func gameContinueAfterGameOverValueChanged(sender: UISwitch) {
-        AppDelegate.Settings.Game.ContinueAfterGameOver = sender.on
+    @IBAction func gameContinueAfterGameOverValueChanged(_ sender: UISwitch) {
+        AppDelegate.Settings.Game.ContinueAfterGameOver = sender.isOn
     }
 
 }

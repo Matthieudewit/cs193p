@@ -12,7 +12,7 @@ extension UILabel {
     
     var value: Double? {
         get {
-            return NSNumberFormatter().numberFromString(self.text!) as? Double
+            return NumberFormatter().number(from: self.text!) as? Double
         }
         set {
             self.text = newValue != nil ? "\(newValue!)" : " "
@@ -28,19 +28,19 @@ class CalculatorViewController: UIViewController {
     var brain = CalculatorBrain()
     var userIsInTheMiddleOfTypingANumber = false
 
-    @IBAction func appendDigit(sender: UIButton) {
+    @IBAction func appendDigit(_ sender: UIButton) {
         let digit = sender.currentTitle!
         display.text = userIsInTheMiddleOfTypingANumber ? display.text! + digit : digit
         userIsInTheMiddleOfTypingANumber = true
     }
 
-    @IBAction func appendPeriod(sender: UIButton) {
-        if display.text!.rangeOfString(".") == nil {
+    @IBAction func appendPeriod(_ sender: UIButton) {
+        if display.text!.range(of: ".") == nil {
             appendDigit(sender)
         }
     }
     
-    @IBAction func appendSign(sender: UIButton) {
+    @IBAction func appendSign(_ sender: UIButton) {
         if userIsInTheMiddleOfTypingANumber && display.value != nil {
             display.value = -display.value!
         } else {
@@ -48,7 +48,7 @@ class CalculatorViewController: UIViewController {
         }
     }
 
-    @IBAction func pushConstant(sender: UIButton) {
+    @IBAction func pushConstant(_ sender: UIButton) {
         let constant = sender.currentTitle!
         enter()
         display.text = constant
@@ -56,7 +56,7 @@ class CalculatorViewController: UIViewController {
         history.text = brain.description
     }
 
-    @IBAction func pushMemory(sender: UIButton) {
+    @IBAction func pushMemory(_ sender: UIButton) {
         let variable = sender.currentTitle!
         enter()
         display.text = variable
@@ -64,9 +64,9 @@ class CalculatorViewController: UIViewController {
         history.text = brain.description
     }
     
-    @IBAction func setMemory(sender: UIButton) {
+    @IBAction func setMemory(_ sender: UIButton) {
         var variable = sender.currentTitle!
-        variable.removeAtIndex(variable.startIndex)
+        variable.remove(at: variable.startIndex)
         userIsInTheMiddleOfTypingANumber = false
         if let displayValue = display.value {
             brain.variableValues[variable] = displayValue
@@ -75,7 +75,7 @@ class CalculatorViewController: UIViewController {
         }
     }
     
-    @IBAction func operate(sender: UIButton) {
+    @IBAction func operate(_ sender: UIButton) {
         let operation = sender.currentTitle!
         enter()
         brain.pushOperation(operation)
@@ -113,8 +113,8 @@ class CalculatorViewController: UIViewController {
         userIsInTheMiddleOfTypingANumber = false
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        var destinationController = segue.destinationViewController
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        var destinationController = segue.destination
         if let navigationController = destinationController as? UINavigationController {
             destinationController = navigationController.visibleViewController!
         }

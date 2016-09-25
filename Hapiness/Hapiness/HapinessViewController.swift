@@ -21,33 +21,33 @@ class HapinessViewController: UIViewController, FaceViewDataSource {
     @IBOutlet weak var faceView: FaceView! {
         didSet {
             faceView.dataSource = self
-            faceView.addGestureRecognizer(UIPinchGestureRecognizer(target: faceView, action: "scale:"))
+            faceView.addGestureRecognizer(UIPinchGestureRecognizer(target: faceView, action: Selector(("scale:"))))
         }
     }
     
-    private struct Constants {
+    fileprivate struct Constants {
         static let HappinessGestureScale: CGFloat = 4
     }
     
-    @IBAction func changeHapiness(gesture: UIPanGestureRecognizer) {
+    @IBAction func changeHapiness(_ gesture: UIPanGestureRecognizer) {
         switch gesture.state {
-        case .Ended: fallthrough
-        case .Changed:
-            let translation = gesture.translationInView(faceView)
+        case .ended: fallthrough
+        case .changed:
+            let translation = gesture.translation(in: faceView)
             let happinessChange = Int(translation.y / Constants.HappinessGestureScale)
             if happinessChange != 0 {
                 happiness += happinessChange
-                gesture.setTranslation(CGPointZero, inView: faceView)
+                gesture.setTranslation(CGPoint.zero, in: faceView)
             }
         default: break;
         }
     }
 
-    private func updateUI() {
+    fileprivate func updateUI() {
         faceView.setNeedsDisplay()
     }
     
-    func smilinessForFaceView(sender: FaceView) -> Double? {
+    func smilinessForFaceView(_ sender: FaceView) -> Double? {
         return Double(happiness-50)/50
     }
 

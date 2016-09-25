@@ -47,10 +47,10 @@ class ViewController: UIViewController {
                 if let newImage = newValue {
                     aspectRatioConstraint = NSLayoutConstraint(
                         item: constrainedView,
-                        attribute: .Width,
-                        relatedBy: .Equal,
+                        attribute: .width,
+                        relatedBy: .equal,
                         toItem: constrainedView,
-                        attribute: .Height,
+                        attribute: .height,
                         multiplier: newImage.aspectRatio,
                         constant: 0)
                 } else {
@@ -60,7 +60,7 @@ class ViewController: UIViewController {
         }
     }
     
-    private struct AlertStrings {
+    fileprivate struct AlertStrings {
         struct LoginError {
             static let Title = NSLocalizedString("Login Error",
                 comment: "Title of alert when user types in an incorrect user name or password")
@@ -76,8 +76,8 @@ class ViewController: UIViewController {
         updateUI()
     }
     
-    private func updateUI() {
-        passwordField.secureTextEntry = secure
+    fileprivate func updateUI() {
+        passwordField.isSecureTextEntry = secure
         let password = NSLocalizedString("Password", comment: "Prompt for a password when it is not secure (i.e. plain text)")
         let securedPassword = NSLocalizedString("Secure Password", comment: "Prompt for a password when it is secure (i.e. obscured)")
         passwordLabel.text = secure ? securedPassword : password
@@ -85,13 +85,13 @@ class ViewController: UIViewController {
         companyLabel.text = loggedInUser?.company
         image = loggedInUser?.image
         if let lastLogin = loggedInUser?.lastLogin {
-            let dateFormatter = NSDateFormatter()
-            dateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
-            dateFormatter.dateStyle = NSDateFormatterStyle.NoStyle
-            let time = dateFormatter.stringFromDate(lastLogin)
-            let numberFormatter = NSNumberFormatter()
+            let dateFormatter = DateFormatter()
+            dateFormatter.timeStyle = DateFormatter.Style.short
+            dateFormatter.dateStyle = DateFormatter.Style.none
+            let time = dateFormatter.string(from: lastLogin as Date)
+            let numberFormatter = NumberFormatter()
             numberFormatter.maximumFractionDigits = 1
-            let daysAgo = numberFormatter.stringFromNumber(-lastLogin.timeIntervalSinceNow/(60*60*24))!
+            let daysAgo = numberFormatter.string(from: NSNumber(value: lastLogin.timeIntervalSinceNow/(60*60*24)))!
             let lastLoginFormatString = NSLocalizedString("Last Login %@ days ago at %@", comment: "Report the number of days ago and time the use last logged in")
             lastLoginLabel.text = String.localizedStringWithFormat(lastLoginFormatString, daysAgo, time)
         } else {
@@ -102,9 +102,9 @@ class ViewController: UIViewController {
     @IBAction func login() {
         loggedInUser = User.login(loginField.text ?? "", password: passwordField.text ?? "")
         if loggedInUser == nil {
-            let alert = UIAlertController(title: AlertStrings.LoginError.Title, message: AlertStrings.LoginError.Message, preferredStyle: UIAlertControllerStyle.Alert)
-            alert.addAction(UIAlertAction(title: AlertStrings.LoginError.DismissButton, style: UIAlertActionStyle.Default, handler: nil))
-            presentViewController(alert, animated: true, completion: nil)
+            let alert = UIAlertController(title: AlertStrings.LoginError.Title, message: AlertStrings.LoginError.Message, preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: AlertStrings.LoginError.DismissButton, style: UIAlertActionStyle.default, handler: nil))
+            present(alert, animated: true, completion: nil)
         }
     }
 

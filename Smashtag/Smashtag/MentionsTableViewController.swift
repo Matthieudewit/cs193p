@@ -7,24 +7,44 @@
 //
 
 import UIKit
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
 
 class MentionsTableViewController: UITableViewController {
 
-    private struct Section {
+    fileprivate struct Section {
         let header: String
         let cellIdentifier: String
         var mentions: [Mention]
-        private enum Mention {
-            case Image(imageURL: NSURL, aspectRatio: CGFloat)
-            case Hashtag(keyword: String)
-            case User(keyword: String)
-            case URL(URL: String)
+        fileprivate enum Mention {
+            case image(imageURL: Foundation.URL, aspectRatio: CGFloat)
+            case hashtag(keyword: String)
+            case user(keyword: String)
+            case url(URL: String)
         }
     }
     
-    private var sections = [Section]()
+    fileprivate var sections = [Section]()
     
-    private struct Storyboard {
+    fileprivate struct Storyboard {
         static let SearchTweetsSegueIdentifier = "Search Tweets"
         static let ShowWebsiteSegueIdentifier = "Show Website"
         static let ShowImageSegueIdentifier = "Show Image"
@@ -35,18 +55,18 @@ class MentionsTableViewController: UITableViewController {
             if tweet?.media.count > 0 {
                 let imagesSection = Section(header: "Images",
                     cellIdentifier: "Mention Image",
-                    mentions: tweet!.media.map{ Section.Mention.Image(imageURL: $0.url, aspectRatio: CGFloat($0.aspectRatio)) })
+                    mentions: tweet!.media.map{ Section.Mention.image(imageURL: $0.url as URL, aspectRatio: CGFloat($0.aspectRatio)) })
                 sections.append(imagesSection)
             }
             if tweet?.hashtags.count > 0 {
                 let hashtagsSection = Section(header: "Hashtags",
                     cellIdentifier: "Mention Hashtag",
-                    mentions: tweet!.hashtags.map{ Section.Mention.Hashtag(keyword: $0.keyword) })
+                    mentions: tweet!.hashtags.map{ Section.Mention.hashtag(keyword: $0.keyword) })
                 sections.append(hashtagsSection)
             }
             if tweet != nil {
-                var userMentions = tweet!.userMentions.map{ Section.Mention.User(keyword: $0.keyword) }
-                userMentions.insert(Section.Mention.User(keyword: "@" + tweet!.user.screenName), atIndex: 0)
+                var userMentions = tweet!.userMentions.map{ Section.Mention.user(keyword: $0.keyword) }
+                userMentions.insert(Section.Mention.user(keyword: "@" + tweet!.user.screenName), at: 0)
                 let usersSection = Section(header: "Users",
                     cellIdentifier: "Mention User",
                     mentions: userMentions)
@@ -55,7 +75,7 @@ class MentionsTableViewController: UITableViewController {
             if tweet?.urls.count > 0 {
                 let urlsSection = Section(header: "URLs",
                     cellIdentifier: "Mention URL",
-                    mentions: tweet!.urls.map{  Section.Mention.URL(URL: $0.keyword) })
+                    mentions: tweet!.urls.map{  Section.Mention.url(URL: $0.keyword) })
                 sections.append(urlsSection)
             }
         }
@@ -74,21 +94,21 @@ class MentionsTableViewController: UITableViewController {
 
     // MARK: - Table view data source
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return sections.count
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return sections[section].mentions.count
     }
     
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return sections[section].header
     }
     
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        switch sections[indexPath.section].mentions[indexPath.row] {
-        case .Image(_, let aspectRatio):
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        switch sections[(indexPath as NSIndexPath).section].mentions[(indexPath as NSIndexPath).row] {
+        case .image(_, let aspectRatio):
             let height = ( tableView.bounds.width - CGFloat(25) ) / aspectRatio
             return height
         default:
@@ -96,18 +116,18 @@ class MentionsTableViewController: UITableViewController {
         }
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(sections[indexPath.section].cellIdentifier, forIndexPath: indexPath)
-        switch sections[indexPath.section].mentions[indexPath.row] {
-        case .Image(let imageURL, _):
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: sections[(indexPath as NSIndexPath).section].cellIdentifier, for: indexPath)
+        switch sections[(indexPath as NSIndexPath).section].mentions[(indexPath as NSIndexPath).row] {
+        case .image(let imageURL, _):
             if let imageCell = cell as? ImageTableViewCell {
                 imageCell.imageURL = imageURL
             }
-        case .Hashtag(let hashtag):
+        case .hashtag(let hashtag):
             cell.textLabel?.text = hashtag
-        case .User(let user):
+        case .user(let user):
             cell.textLabel?.text = user
-        case .URL(let url):
+        case .url(let url):
             cell.textLabel?.text = url
         }
         return cell
@@ -115,14 +135,14 @@ class MentionsTableViewController: UITableViewController {
     
     // MARK: - Table view delegate
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let section = sections[indexPath.section]
-        let rowData = section.mentions[indexPath.row]
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let section = sections[(indexPath as NSIndexPath).section]
+        let rowData = section.mentions[(indexPath as NSIndexPath).row]
         switch rowData {
-        case .Hashtag:
-            performSegueWithIdentifier(Storyboard.SearchTweetsSegueIdentifier, sender: tableView.cellForRowAtIndexPath(indexPath))
-        case .User:
-            performSegueWithIdentifier(Storyboard.SearchTweetsSegueIdentifier, sender: tableView.cellForRowAtIndexPath(indexPath))
+        case .hashtag:
+            performSegue(withIdentifier: Storyboard.SearchTweetsSegueIdentifier, sender: tableView.cellForRow(at: indexPath))
+        case .user:
+            performSegue(withIdentifier: Storyboard.SearchTweetsSegueIdentifier, sender: tableView.cellForRow(at: indexPath))
         default:
             break
         }
@@ -130,25 +150,25 @@ class MentionsTableViewController: UITableViewController {
 
     // MARK: - Navigation
 
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == nil { return }
         switch segue.identifier! {
         case Storyboard.SearchTweetsSegueIdentifier:
-            if let tweetsTableController = segue.destinationViewController as? TweetsTableViewController {
-                if let senderCell = sender as? UITableViewCell where senderCell.textLabel?.text != nil {
+            if let tweetsTableController = segue.destination as? TweetsTableViewController {
+                if let senderCell = sender as? UITableViewCell , senderCell.textLabel?.text != nil {
                     tweetsTableController.searchText = senderCell.textLabel!.text
                 }
             }
         case Storyboard.ShowImageSegueIdentifier:
-            if let imageController = segue.destinationViewController as? ImageViewController {
-                if let senderCell = sender as? ImageTableViewCell where senderCell.imageURL != nil {
+            if let imageController = segue.destination as? ImageViewController {
+                if let senderCell = sender as? ImageTableViewCell , senderCell.imageURL != nil {
                     imageController.imageURL = senderCell.imageURL
                 }
             }
         case Storyboard.ShowWebsiteSegueIdentifier:
-            if let websiteController = segue.destinationViewController as? WebsiteViewController {
-                if let senderCell = sender as? UITableViewCell where senderCell.textLabel?.text != nil {
-                    websiteController.websiteURL = NSURL(string: senderCell.textLabel!.text!)
+            if let websiteController = segue.destination as? WebsiteViewController {
+                if let senderCell = sender as? UITableViewCell , senderCell.textLabel?.text != nil {
+                    websiteController.websiteURL = URL(string: senderCell.textLabel!.text!)
                 }
             }
          default:

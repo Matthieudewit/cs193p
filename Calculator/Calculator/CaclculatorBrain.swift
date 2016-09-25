@@ -10,15 +10,15 @@ import Foundation
 
 class CalculatorBrain: CustomStringConvertible {
     
-    private enum Op: CustomStringConvertible {
-        case Operand(Double)
-        case Variable(String)
-        case Constant(String,
+    fileprivate enum Op: CustomStringConvertible {
+        case operand(Double)
+        case variable(String)
+        case constant(String,
                 value: Double)
-        case UnaryOperation(String,
-                evaluate: Double -> Double,
-                reportError: (Double -> String?)?)
-        case BinaryOperation(String,
+        case unaryOperation(String,
+                evaluate: (Double) -> Double,
+                reportError: ((Double) -> String?)?)
+        case binaryOperation(String,
                 precedence: Int,
                 evaluate: (Double, Double) -> Double,
                 reportError: ((Double, Double) -> String?)?)
@@ -26,38 +26,38 @@ class CalculatorBrain: CustomStringConvertible {
         var description: String {
             get {
                 switch self {
-                case .Operand(let operand):
+                case .operand(let operand):
                     return "\(operand)"
-                case .Variable(let variable):
+                case .variable(let variable):
                     return variable
-                case .Constant(let constant, _):
+                case .constant(let constant, _):
                     return constant
-                case .UnaryOperation(let symbol, _, _):
+                case .unaryOperation(let symbol, _, _):
                     return symbol
-                case .BinaryOperation(let symbol, _, _, _):
+                case .binaryOperation(let symbol, _, _, _):
                     return symbol
                 }
             }
         }
     }
     enum ValueOrError: CustomStringConvertible {
-        case Value(Double)
-        case Error(String)
+        case value(Double)
+        case error(String)
       
         var description: String {
             get {
                 switch self {
-                case .Value(let value):
+                case .value(let value):
                     return "\(value)"
-                case .Error(let error):
+                case .error(let error):
                     return error
                 }
             }
         }
     }
     
-    private var opStack = [Op]()
-    private var knownOps = [String:Op]()
+    fileprivate var opStack = [Op]()
+    fileprivate var knownOps = [String:Op]()
     
     var variableValues = [String:Double]()
     var text: String {
@@ -83,7 +83,7 @@ class CalculatorBrain: CustomStringConvertible {
     }
     var program: AnyObject {
         get {
-            return opStack.map { $0.description }
+            return opStack.map { $0.description } as AnyObject
         }
         set {
             if let opSymbols = newValue as? Array<String> {
@@ -91,10 +91,10 @@ class CalculatorBrain: CustomStringConvertible {
                 for opSymbol in opSymbols {
                     if let op = knownOps[opSymbol] {
                         newOpStack.append(op)
-                    } else if let operand = NSNumberFormatter().numberFromString(opSymbol)?.doubleValue {
-                        newOpStack.append(.Operand(operand))
+                    } else if let operand = NumberFormatter().number(from: opSymbol)?.doubleValue {
+                        newOpStack.append(.operand(operand))
                     } else {
-                        newOpStack.append(.Variable(opSymbol))
+                        newOpStack.append(.variable(opSymbol))
                     }
                     opStack = newOpStack
                 }
@@ -103,55 +103,56 @@ class CalculatorBrain: CustomStringConvertible {
     }
 
     init() {
-        func learnOp(op: Op) {
+        func learnOp(_ op: Op) {
             knownOps[op.description] = op
         }
-        learnOp(Op.Constant("π",
+        learnOp(Op.constant("π",
                 value: M_PI))
-        learnOp(Op.UnaryOperation("±",
+        learnOp(Op.unaryOperation("±",
                 evaluate: { -$0 },
                 reportError: nil))
-        learnOp(Op.UnaryOperation("sin",
+        learnOp(Op.unaryOperation("sin",
                 evaluate: { sin($0) },
                 reportError: nil))
-        learnOp(Op.UnaryOperation("cos",
+        learnOp(Op.unaryOperation("cos",
                 evaluate: { cos($0) },
                 reportError: nil))
-        learnOp(Op.UnaryOperation("√",
+        learnOp(Op.unaryOperation("√",
                 evaluate: { sqrt($0) },
                 reportError: { op1 in op1 < 0.0 ? "Square root of negative value!" : nil }))
-        learnOp(Op.BinaryOperation("×",
+        learnOp(Op.binaryOperation("×",
                 precedence: 150,
                 evaluate: { $1*$0 },
                 reportError: nil))
-        learnOp(Op.BinaryOperation("÷",
+        learnOp(Op.binaryOperation("÷",
                 precedence: 150,
             evaluate: { $1/$0 },
             reportError: { op1, op2 in op1 == 0.0 ? "Division by zero!" : nil }))
-        learnOp(Op.BinaryOperation("+",
+        learnOp(Op.binaryOperation("+",
                 precedence: 140,
                 evaluate: { $1+$0 },
                 reportError: nil))
-        learnOp(Op.BinaryOperation("−",
+        learnOp(Op.binaryOperation("−",
                 precedence: 140,
                 evaluate: { $1-$0 },
                 reportError: nil))
     }
     
-    private func describe(var currentOps: [Op], currentOpPrecedence: Int = 0) -> (description: String, remainingOps: [Op]) {
+    private func describe(_ currentOps: [Op], currentOpPrecedence: Int = 0) -> (description: String, remainingOps: [Op]) {
+        var currentOps = currentOps
         if !currentOps.isEmpty {
             let op = currentOps.removeLast()
             switch op  {
-            case .Operand:
+            case .operand:
                 return (op.description, currentOps)
-            case .Variable:
+            case .variable:
                 return (op.description, currentOps)
-            case .Constant:
+            case .constant:
                 return (op.description, currentOps)
-            case .UnaryOperation:
+            case .unaryOperation:
                 let (operandDesc, remainingOps) = describe(currentOps)
                 return ( op.description+"("+operandDesc+")", remainingOps)
-            case .BinaryOperation(_, let precedence, _, _):
+            case .binaryOperation(_, let precedence, _, _):
                 let (operandDesc1, remainingOps1) = describe(currentOps, currentOpPrecedence: precedence)
                 let (operandDesc2, remainingOps2) = describe(remainingOps1, currentOpPrecedence: precedence)
                 if precedence < currentOpPrecedence {
@@ -164,22 +165,23 @@ class CalculatorBrain: CustomStringConvertible {
         return ("?", currentOps)
     }
     
-    private func evaluate(var currentOps: [Op]) -> (result: Double?, remainingOps: [Op]) {
+    private func evaluate(_ currentOps: [Op]) -> (result: Double?, remainingOps: [Op]) {
+        var currentOps = currentOps
         if !currentOps.isEmpty {
             let op = currentOps.removeLast()
             switch op {
-            case .Operand(let operand):
+            case .operand(let operand):
                 return (operand, currentOps)
-            case .Variable(let variable):
+            case .variable(let variable):
                 return (variableValues[variable], currentOps)
-            case .Constant(_, let value):
+            case .constant(_, let value):
                 return (value, currentOps)
-            case .UnaryOperation(_, let operation, _):
+            case .unaryOperation(_, let operation, _):
                 let (result, remainingOps) = evaluate(currentOps)
                 if let operand = result {
                     return (operation(operand), remainingOps)
                 }
-            case .BinaryOperation(_, _, let operation, _):
+            case .binaryOperation(_, _, let operation, _):
                 let (result1, remainingOps1) = evaluate(currentOps)
                 if let operand1 = result1 {
                     let (result2, remainingOps2) = evaluate(remainingOps1)
@@ -192,58 +194,59 @@ class CalculatorBrain: CustomStringConvertible {
         return (nil, currentOps)
     }
     
-    private func evaluateAndReportErrors(var currentOps: [Op]) -> (result: ValueOrError, remainingOps: [Op]) {
+    private func evaluateAndReportErrors(_ currentOps: [Op]) -> (result: ValueOrError, remainingOps: [Op]) {
+        var currentOps = currentOps
         if !currentOps.isEmpty {
             let op = currentOps.removeLast()
             switch op {
-            case .Operand(let operand):
-                return (ValueOrError.Value(operand), currentOps)
-            case .Variable(let variable):
+            case .operand(let operand):
+                return (ValueOrError.value(operand), currentOps)
+            case .variable(let variable):
                 if let value = variableValues[variable] {
-                    return (ValueOrError.Value(value), currentOps)
+                    return (ValueOrError.value(value), currentOps)
                 } else {
-                    return (ValueOrError.Error("Variable not defined!"), currentOps)
+                    return (ValueOrError.error("Variable not defined!"), currentOps)
                 }
-            case .Constant(_, let value):
-                return (ValueOrError.Value(value), currentOps)
-            case .UnaryOperation(_, let operation, let reportError):
+            case .constant(_, let value):
+                return (ValueOrError.value(value), currentOps)
+            case .unaryOperation(_, let operation, let reportError):
                 var value: Double
                 let (result, remainingOps) = evaluateAndReportErrors(currentOps)
                 switch (result) {
-                case .Error:
+                case .error:
                     return (result, remainingOps)
-                case .Value(let tmp):
+                case .value(let tmp):
                     value = tmp
                 }
                 if let error = reportError?(value) {
-                    return (ValueOrError.Error(error), currentOps)
+                    return (ValueOrError.error(error), currentOps)
                 } else {
-                    return (ValueOrError.Value(operation(value)), remainingOps)
+                    return (ValueOrError.value(operation(value)), remainingOps)
                 }
-            case .BinaryOperation(_, _, let operation, let reportError):
+            case .binaryOperation(_, _, let operation, let reportError):
                 var value1: Double, value2 :Double
                 let (result1, remainingOps1) = evaluateAndReportErrors(currentOps)
                 switch result1 {
-                case .Error:
+                case .error:
                     return (result1, remainingOps1)
-                case .Value(let tmp):
+                case .value(let tmp):
                     value1 = tmp
                 }
                 let (result2, remainingOps2) = evaluateAndReportErrors(remainingOps1)
                 switch result2 {
-                case .Error:
+                case .error:
                     return (result2, remainingOps2)
-                case .Value(let tmp):
+                case .value(let tmp):
                     value2 = tmp
                 }
                 if let error = reportError?(value1, value2) {
-                   return (ValueOrError.Error(error), currentOps)
+                   return (ValueOrError.error(error), currentOps)
                 } else {
-                   return (ValueOrError.Value(operation(value1, value2)), remainingOps2)
+                   return (ValueOrError.value(operation(value1, value2)), remainingOps2)
                 }
             }
         }
-        return (ValueOrError.Error("Not enough operands!"), currentOps)
+        return (ValueOrError.error("Not enough operands!"), currentOps)
     }
     
     func evaluate() -> Double? {
@@ -263,45 +266,45 @@ class CalculatorBrain: CustomStringConvertible {
         return result
     }
 
-    func evaluateOperand(operand: Double) -> Double? {
+    func evaluateOperand(_ operand: Double) -> Double? {
         pushOperand(operand)
         return evaluate()
     }
 
-    func evaluateOperandAndReportErrors(operand: Double) -> ValueOrError {
+    func evaluateOperandAndReportErrors(_ operand: Double) -> ValueOrError {
         pushOperand(operand)
         return evaluateAndReportErrors()
     }
     
-    func evaluateVariable(variable: String) -> Double? {
+    func evaluateVariable(_ variable: String) -> Double? {
         pushVariable(variable)
         return evaluate()
     }
 
-    func evaluateVariable(variable: String) -> ValueOrError {
+    func evaluateVariable(_ variable: String) -> ValueOrError {
         pushVariable(variable)
         return evaluateAndReportErrors()
     }
     
-    func evaluateOperation(symbol: String) -> Double? {
+    func evaluateOperation(_ symbol: String) -> Double? {
         pushOperation(symbol)
         return evaluate()
     }
     
-    func evaluateOperationAndReportErrors(symbol: String) -> ValueOrError {
+    func evaluateOperationAndReportErrors(_ symbol: String) -> ValueOrError {
         pushOperation(symbol)
         return evaluateAndReportErrors()
     }
     
-    func pushOperand(operand: Double) {
-        opStack.append(Op.Operand(operand))
+    func pushOperand(_ operand: Double) {
+        opStack.append(Op.operand(operand))
     }
     
-    func pushVariable(variable: String) {
-        opStack.append(Op.Variable(variable))
+    func pushVariable(_ variable: String) {
+        opStack.append(Op.variable(variable))
     }
     
-    func pushOperation(symbol: String) {
+    func pushOperation(_ symbol: String) {
         if let operation = knownOps[symbol] {
             opStack.append(operation)
         }
@@ -312,11 +315,11 @@ class CalculatorBrain: CustomStringConvertible {
     }
 
     func clearOpStack() {
-        opStack.removeAll(keepCapacity: true)
+        opStack.removeAll(keepingCapacity: true)
     }
     
     func clearAll() {
         clearOpStack()
-        variableValues.removeAll(keepCapacity: true)
+        variableValues.removeAll(keepingCapacity: true)
     }
 }

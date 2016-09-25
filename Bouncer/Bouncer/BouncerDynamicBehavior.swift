@@ -20,11 +20,11 @@ class BouncerDynamicBehavior: UIDynamicBehavior {
     lazy var blockBehavior: UIDynamicItemBehavior = {
         let lazilyCreatedBlockBehavior = UIDynamicItemBehavior()
         lazilyCreatedBlockBehavior.allowsRotation = true
-        lazilyCreatedBlockBehavior.elasticity = CGFloat(NSUserDefaults.standardUserDefaults().doubleForKey("BouncerBehavior.Elasticity"))
+        lazilyCreatedBlockBehavior.elasticity = CGFloat(UserDefaults.standard.double(forKey: "BouncerBehavior.Elasticity"))
         lazilyCreatedBlockBehavior.friction = 0
         lazilyCreatedBlockBehavior.resistance = 0
-        NSNotificationCenter.defaultCenter().addObserverForName(NSUserDefaultsDidChangeNotification, object: nil, queue: nil) { (notification) -> Void in
-                lazilyCreatedBlockBehavior.elasticity = CGFloat(NSUserDefaults.standardUserDefaults().doubleForKey("BounderBehavior.Elasticity"))
+        NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: nil) { (notification) -> Void in
+                lazilyCreatedBlockBehavior.elasticity = CGFloat(UserDefaults.standard.double(forKey: "BounderBehavior.Elasticity"))
         }
         return lazilyCreatedBlockBehavior
         }()
@@ -36,19 +36,19 @@ class BouncerDynamicBehavior: UIDynamicBehavior {
         addChildBehavior(blockBehavior)
     }
     
-    func addBarrier(path: UIBezierPath, named name: String) {
-        collider.removeBoundaryWithIdentifier(name)
-        collider.addBoundaryWithIdentifier(name, forPath: path)
+    func addBarrier(_ path: UIBezierPath, named name: String) {
+        collider.removeBoundary(withIdentifier: name as NSCopying)
+        collider.addBoundary(withIdentifier: name as NSCopying, for: path)
     }
     
-    func addBlock(block: UIView) {
+    func addBlock(_ block: UIView) {
         dynamicAnimator?.referenceView?.addSubview(block)
         gravity.addItem(block)
         collider.addItem(block)
         blockBehavior.addItem(block)
     }
     
-    func removeBlock(block: UIView) {
+    func removeBlock(_ block: UIView) {
         gravity.removeItem(block)
         collider.removeItem(block)
         blockBehavior.removeItem(block)

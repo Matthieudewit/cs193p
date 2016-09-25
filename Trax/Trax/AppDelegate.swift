@@ -18,10 +18,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-    func application(application: UIApplication, handleOpenURL url: NSURL) -> Bool {
-        let center = NSNotificationCenter.defaultCenter()
-        let notification = NSNotification(name: GPXURL.Notification, object: self, userInfo: [GPXURL.Key:url])
-        center.postNotification(notification)
+    func application(_ application: UIApplication, handleOpen url: URL) -> Bool {
+        let center = NotificationCenter.default
+        let notification = Notification(name: Notification.Name(rawValue: GPXURL.Notification), object: self, userInfo: [GPXURL.Key:url])
+        center.post(notification)
         return true
     }
 
